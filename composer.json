@@ -1,10 +1,8 @@
 {
-    "name" : "rampage-php/nexus-common",
-    "description" : "Common classes for Rampage-Nexus PHP Deployment",
-    "repositories" : [{
-            "type" : "git",
-            "url" : "git@github.com:tux-rampage/zend-di.git"
-        }
+    "name" : "tuxrampage/nexus-common",
+    "description" : "Common classes for Nexus PHP Deployment",
+    "repositories" : [
+        { "type" : "git", "url" : "git@github.com:tux-rampage/zend-di.git" }
     ],
     "require" : {
         "php" : "^5.6 || ^7.0",
