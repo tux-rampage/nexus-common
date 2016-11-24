@@ -51,6 +51,7 @@ return [
             EmitterInterface::class => ServiceFactory\ResponseEmitterFactory::class,
             ConsoleApplication::class => ServiceFactory\ConsoleApplicationFactory::class,
             PrivateKey::class => ServiceFactory\PrivateKeyFactory::class,
+            Archive\ArchiveLoader::class => ServiceFactory\ArchiveLoaderFactory::class,
             'RuntimeConfig' => ServiceFactory\RuntimeConfigFactory::class,
         ],
     ],
