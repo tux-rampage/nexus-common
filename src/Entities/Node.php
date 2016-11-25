@@ -433,6 +433,16 @@ class Node implements NodeInterface, ArrayExchangeInterface
     }
 
     /**
+     * @param string $url
+     * @return self
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Rampage\Nexus\Deployment\NodeInterface::canSync()
      */
