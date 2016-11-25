@@ -32,6 +32,7 @@ use Zend\Expressive\ConfigManager\ConfigManager;
 use Zend\Expressive\ConfigManager\ZendConfigProvider;
 
 use Phar;
+use Zend\Stdlib\Parameters;
 
 /**
  * Factory for loading the runtime config
@@ -56,18 +57,22 @@ class RuntimeConfigFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $system = $container->has('config')? $container->get('config') : [];
-        $data = [];
 
         if (isset($system[self::KEY]) && $this->isArrayAccessible($system[self::KEY])) {
-            $data = $system[self::KEY];
+            $data = new Parameters($system[self::KEY]);
+        } else {
+            $data = new Parameters([]);
         }
 
         ZendConfigFactory::registerReader('conf', 'ini');
+        $defaultPrefix = Phar::running()? '/etc/php-deployment' : __DIR__ . '/../../etc';
+        $prefix = $data->get('config_dir', $defaultPrefix)? : $defaultPrefix;
 
-        $localPrefix = Phar::running()? '' : __DIR__ . '/../..';
         $configManager = new ConfigManager([
-            function() use ($data) { return $data; },
-            new ZendConfigProvider($localPrefix . '/etc/php-deployment/*.conf'),
+            function() use ($data) {
+                return $data->getArrayCopy();
+            },
+            new ZendConfigProvider($prefix . '/*.conf'),
         ]);
 
         return new ArrayConfig($configManager->getMergedConfig());
