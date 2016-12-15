@@ -42,6 +42,14 @@ interface NodeRepositoryInterface extends RepositoryInterface, PrototypeProvider
     public function findByTarget(DeployTarget $target);
 
     /**
+     * Finds a node by its url
+     *
+     * @param string $url
+     * @return Node|null
+     */
+    public function findByUrl($url);
+
+    /**
      * Persist the given object
      *
      * @param   object  $node The object to persist
