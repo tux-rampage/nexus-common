@@ -185,7 +185,7 @@ class Node implements NodeInterface, ArrayExchangeInterface
      *
      * @param NodeStrategyInterface $strategy
      */
-    protected function setStrategy(NodeStrategyInterface $strategy)
+    public function setStrategy(NodeStrategyInterface $strategy)
     {
         $strategy->setEntity($this);
         $this->strategy = $strategy;
@@ -194,7 +194,7 @@ class Node implements NodeInterface, ArrayExchangeInterface
     /**
      * @return \Rampage\Nexus\Deployment\NodeStrategyInterface
      */
-    protected function getStrategy()
+    public function getStrategy()
     {
         if (!$this->strategy) {
             if (!$this->strategyProvider || !$this->strategyProvider->has($this->type)) {
