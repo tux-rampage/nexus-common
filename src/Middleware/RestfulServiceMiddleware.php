@@ -23,13 +23,18 @@
 namespace Rampage\Nexus\Middleware;
 
 use Rampage\Nexus\Exception\Http\BadRequestException;
+use Rampage\Nexus\Entities\Api\ArrayExportableInterface;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\EmptyResponse;
+use Zend\Diactoros\Response;
+
 use Zend\Stratigility\MiddlewareInterface;
+use Zend\Stdlib\ArraySerializableInterface;
 
 
 /**
@@ -109,6 +114,21 @@ class RestfulServiceMiddleware implements MiddlewareInterface
     }
 
     /**
+     * @param mixed $result
+     * @return mixed
+     */
+    private function prepareJsonData($result)
+    {
+        if ($result instanceof ArrayExportableInterface) {
+            $result = $result->toArray();
+        } else if ($result instanceof ArraySerializableInterface) {
+            $result = $result->getArrayCopy();
+        }
+
+        return $result;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
      */
@@ -130,6 +150,10 @@ class RestfulServiceMiddleware implements MiddlewareInterface
             return $this->notFound($out);
         }
 
+        if ($result instanceof StreamInterface) {
+            $result = new Response($result);
+        }
+
         if (!$result instanceof ResponseInterface) {
             $flags = JsonResponse::DEFAULT_JSON_FLAGS;
 
@@ -137,7 +161,7 @@ class RestfulServiceMiddleware implements MiddlewareInterface
                 $flags = $flags | JSON_PRETTY_PRINT;
             }
 
-            $result = new JsonResponse($result);
+            $result = new JsonResponse($this->prepareJsonData($result));
         }
 
         return $result;

@@ -29,11 +29,18 @@ use Rampage\Nexus\Exception\UnexpectedValueException;
 use Zend\Stdlib\ArraySerializableInterface;
 
 use ArrayObject;
+use ArrayIterator;
 use JsonSerializable;
 use Traversable;
+use Iterator;
+use IteratorAggregate;
+use IteratorIterator;
 
 
-class JsonCollectionBuilder implements JsonSerializable
+/**
+ * Builds a JSON serializable collection
+ */
+class JsonExportableCollection implements JsonSerializable, IteratorAggregate
 {
     /**
      * @var array|Traversable|ArrayExportableInterface
@@ -53,6 +60,23 @@ class JsonCollectionBuilder implements JsonSerializable
         }
 
         $this->collection = $collection;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see IteratorAggregate::getIterator()
+     */
+    public function getIterator()
+    {
+        if (is_array($this->collection)) {
+            $iterator = new ArrayIterator($this->collection);
+        } else if ($this->collection instanceof ArrayExportableInterface) {
+            $iterator = new ArrayIterator($this->collection->toArray());
+        } else {
+            $iterator = ($this->collection instanceof Iterator)? $this->collection : new IteratorIterator($this->collection);
+        }
+
+        return $iterator;
     }
 
     /**

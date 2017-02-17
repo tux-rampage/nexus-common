@@ -24,6 +24,7 @@ namespace Rampage\Nexus\Repository\RestService;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Rampage\Nexus\Exception\Http\BadRequestException;
+use Rampage\Nexus\Entities\Api\ArrayExchangeInterface;
 
 /**
  * Repo put implementation
@@ -33,9 +34,15 @@ trait PutableTrait
     use RepositoryTrait;
 
     /**
+     * @param ArrayExchangeInterface $entity
+     * @param array $data
      * @return static
      */
-    abstract private function updateEntity($entity, array $data);
+    private function updateEntity($entity, array $data)
+    {
+        $entity->exchangeArray($data);
+        return $this;
+    }
 
     /**
      * @param int|string $id

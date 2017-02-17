@@ -23,6 +23,7 @@
 namespace Rampage\Nexus\Repository\RestService;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Rampage\Nexus\Api\JsonExportableCollection;
 
 
 trait GetableTrait
@@ -34,7 +35,7 @@ trait GetableTrait
      */
     protected function getList(ServerRequestInterface $request)
     {
-        return $this->getRepository()->findAll();
+        return new JsonExportableCollection($this->getRepository()->findAll());
     }
 
     /**
