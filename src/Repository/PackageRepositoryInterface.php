@@ -23,7 +23,7 @@
 namespace Rampage\Nexus\Repository;
 
 use Rampage\Nexus\Package\PackageInterface;
-use Rampage\Nexus\Entities\ApplicationPackage;
+
 
 /**
  * Repository for entities implementing PackageInterface
@@ -39,22 +39,6 @@ interface PackageRepositoryInterface extends RepositoryInterface
      * @return  PackageInterface[]
      */
     public function findByPackageName($packageName);
-
-    /**
-     * Persist the given object
-     *
-     * @param   object  $package The object to persist
-     * @return  self            Provides a fluent interface
-     */
-    public function save(ApplicationPackage $package);
-
-    /**
-     * Remove the object from persistence
-     *
-     * @param   object  $package The object to remove
-     * @return  self            Provides a fluent interface
-     */
-    public function remove(ApplicationPackage $package);
 
     /**
      * Add a subscriber

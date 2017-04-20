@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016 Axel Helmert
+ * Copyright (c) 2017 Axel Helmert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Axel Helmert
- * @copyright Copyright (c) 2016 Axel Helmert
+ * @copyright Copyright (c) 2017 Axel Helmert
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
 namespace Rampage\Nexus\Repository;
 
-use Rampage\Nexus\Repository\RepositoryInterface;
-use Rampage\Nexus\Entities\DeployTarget;
-use Rampage\Nexus\Entities\Application;
-use Rampage\Nexus\Entities\ApplicationPackage;
-
 /**
- * Repository for deploy targets
+ * Defines the persistence manager
  */
-interface DeployTargetRepositoryInterface extends RepositoryInterface
+interface PersistenceManagerInterface
 {
     /**
-     * Find deploy targets where the given application is deployed
+     * Persist an entity
      *
-     * @param Application $application
-     * @return DeployTarget[]
+     * @throws \InvalidArgumentException    When the provided object is not a persistable entity
+     * @param object $object
      */
-    public function findByApplication(Application $application);
+    public function persist($object);
 
     /**
-     * Find deploy targets where the given application package is (or was previously) deployed
-     *
-     * @param ApplicationPackage $application
-     * @return DeployTarget[]
+     * @throws \InvalidArgumentException    When the provided object is not a persistable entity
+     * @param object $object
      */
-    public function findByPackage(ApplicationPackage $application);
+    public function remove($object);
+
+    /**
+     * @throws \RuntimeException    When flushing the changes fails
+     * @param object $object
+     */
+    public function flush($object = null);
 }

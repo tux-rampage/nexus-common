@@ -53,11 +53,10 @@ trait PutableTrait
     {
         if (null !== ($entity = $this->repository->findOne($id))) {
             $this->updateEntity($entity, $data);
-            $this->repository->save($entity);
+            $this->persistenceManager->persist($entity);
         }
 
         return $entity;
-
     }
 
     /**
@@ -83,23 +82,28 @@ trait PutableTrait
     public function put(ServerRequestInterface $request)
     {
         $id = $request->getAttribute('id');
+        $result = null;
 
         if ($id) {
-            return $this->putEntity($id, $request->getParsedBody());
-        }
+            $result = $this->putEntity($id, $request->getParsedBody());
+        } else {
 
-        $items = $this->getPutItemsList($request);
-        $results = [];
+            $items = $this->getPutItemsList($request);
+            $results = [];
 
-        foreach ($items as $item) {
-            if (!is_array($item) || !isset($item['id'])) {
-                $results[] = false;
-                continue;
+            foreach ($items as $item) {
+                if (!is_array($item) || !isset($item['id'])) {
+                    $results[] = false;
+                    continue;
+                }
+
+                $results[] = $this->putEntity($item['id'], $item)? : false;
             }
 
-            $results[] = $this->putEntity($item['id'], $item)? : false;
+            $result = compact('results');
         }
 
-        return compact('results');
+        $this->persistenceManager->flush();
+        return $result;
     }
 }

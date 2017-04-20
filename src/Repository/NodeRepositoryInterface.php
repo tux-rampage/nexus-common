@@ -48,21 +48,4 @@ interface NodeRepositoryInterface extends RepositoryInterface, PrototypeProvider
      * @return Node|null
      */
     public function findByUrl($url);
-
-    /**
-     * Persist the given object
-     *
-     * @param   object  $node The object to persist
-     * @return  self            Provides a fluent interface
-     */
-    public function save(Node $node);
-
-    /**
-     * Remove the object from persistence
-     *
-     * @param   object  $node The object to remove
-     * @return  self            Provides a fluent interface
-     */
-    public function remove(Node $node);
-
 }

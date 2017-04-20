@@ -50,7 +50,8 @@ trait PostableTrait
         }
 
         if (null !== ($entity = $this->createNewEntity($data))) {
-            $this->repository->save($entity);
+            $this->persistenceManager->persist($entity);
+            $this->persistenceManager->flush($entity);
         }
 
         return $entity;
