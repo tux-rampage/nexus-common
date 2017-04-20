@@ -76,7 +76,7 @@ class ZpkLoader implements PackageLoaderInterface
     public function load(PharData $archive)
     {
         $package = $this->read($archive);
-        $package->setArchive($archive->getPath());
+        $package->setArchive($archive->getPathname());
 
         return $package;
     }
