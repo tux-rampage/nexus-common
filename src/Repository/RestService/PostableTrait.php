@@ -28,6 +28,7 @@ use Rampage\Nexus\Exception\Http\BadRequestException;
 trait PostableTrait
 {
     use RepositoryTrait;
+    use PersistenceManagerTrait;
 
     /**
      * Create a new entity from data

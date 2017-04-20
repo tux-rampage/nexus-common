@@ -30,6 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 trait DeletableTrait
 {
     use RepositoryTrait;
+    use PersistenceManagerTrait;
 
     /**
      * Delete an entity
@@ -43,7 +44,7 @@ trait DeletableTrait
         $entity = $id? $this->repository->findOne($id) : null;
 
         if (!$entity) {
-            $this->repository->remove($entity);
+            $this->persistenceManager->remove($entity);
         }
 
         return $entity;

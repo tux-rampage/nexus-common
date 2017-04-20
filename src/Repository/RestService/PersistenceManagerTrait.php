@@ -22,15 +22,15 @@
 
 namespace Rampage\Nexus\Repository\RestService;
 
-use Rampage\Nexus\Repository\RepositoryInterface;
+use Rampage\Nexus\Repository\PersistenceManagerInterface;
 
 /**
  * Trait for providing a repository
  */
-trait RepositoryTrait
+trait PersistenceManagerTrait
 {
     /**
-     * @var RepositoryInterface
+     * @var PersistenceManagerInterface
      */
-    private $repository;
+    private $persistenceManager = null;
 }

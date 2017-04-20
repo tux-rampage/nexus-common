@@ -32,6 +32,7 @@ use Rampage\Nexus\Entities\Api\ArrayExchangeInterface;
 trait PutableTrait
 {
     use RepositoryTrait;
+    use PersistenceManagerTrait;
 
     /**
      * @param ArrayExchangeInterface $entity
