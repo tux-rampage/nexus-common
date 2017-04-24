@@ -55,11 +55,6 @@ class DeployTarget
     protected $vhosts;
 
     /**
-     * @var VHost
-     */
-    protected $defaultVhost;
-
-    /**
      * Collection of attached deployment nodes
      *
      * @var NodeInterface[]|ArrayCollection
@@ -107,7 +102,6 @@ class DeployTarget
         $this->nodes = new ArrayCollection();
         $this->vhosts = new ArrayCollection();
         $this->applications = new ArrayCollection();
-        $this->defaultVhost = new VHost(VHost::DEFAULT_VHOST);
     }
 
     /**
@@ -143,24 +137,16 @@ class DeployTarget
      */
     public function addVHost(VHost $host)
     {
-        if ($host->isDefault()) {
-            throw new LogicException('Cannot add another default VHost');
-        }
-
         $this->vhosts[$host->getId()] = $host;
         return $this;
     }
 
     /**
      * @param string|null $id
-     * @return \Rampage\Nexus\Entities\VHost|NULL
+     * @return \Rampage\Nexus\Entities\VHost
      */
     public function getVHost($id)
     {
-        if (!$id || ($id == VHost::DEFAULT_VHOST)) {
-            return $this->defaultVhost;
-        }
-
         if (isset($this->vhosts[$id])) {
             return $this->vhosts[$id];
         }
@@ -183,10 +169,6 @@ class DeployTarget
      */
     public function removeVHost(VHost $host)
     {
-        if ($host->isDefault()) {
-            throw new LogicException('Cannot remove the default vhost');
-        }
-
         unset($this->vhosts[$host->getId()]);
         return $this;
     }
@@ -201,7 +183,7 @@ class DeployTarget
     }
 
     /**
-     * @return \Rampage\Nexus\Deployment\NodeInterface[]
+     * @return \Rampage\Nexus\Entities\Node[]
      */
     public function getNodes()
     {
