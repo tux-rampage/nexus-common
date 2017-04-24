@@ -268,6 +268,10 @@ class Node implements NodeInterface, ArrayExchangeInterface
      */
     public function attach(DeployTarget $deployTarget)
     {
+        if ($this->deployTarget) {
+            throw new LogicException('This node is already attached to a deploy target');
+        }
+
         $this->deployTarget = $deployTarget;
         $this->getStrategy()->attach($deployTarget);
 
