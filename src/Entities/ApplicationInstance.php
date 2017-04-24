@@ -309,6 +309,9 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
         return $this->previousParameters;
     }
 
+    /**
+     * @return boolean
+     */
     public function isRemoved()
     {
         return $this->isRemoved;
@@ -343,6 +346,16 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
         $this->previousPackage = null;
         $this->previousUserParameters = null;
 
+        return $this;
+    }
+
+    /**
+     * @param string $label
+     * @return self
+     */
+    public function setLabel($label)
+    {
+        $this->label = (string)$label;
         return $this;
     }
 
