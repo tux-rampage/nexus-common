@@ -83,7 +83,7 @@ class VHost implements Api\ArrayExchangeInterface
      */
     public function __construct($name)
     {
-        $this->id = ($name != self::DEFAULT_VHOST)? sha1(uniqid('VHOST.', true)) : self::DEFAULT_VHOST;
+        $this->id = sha1(uniqid('VHOST.', true));
         $this->setName($name);
     }
 
@@ -188,7 +188,9 @@ class VHost implements Api\ArrayExchangeInterface
      */
     public function addAlias($name)
     {
-        if (!in_array($name, $this->aliases)) {
+        $name = (string)$name;
+
+        if ($name && !in_array($name, $this->aliases)) {
             $this->aliases[] = $name;
         }
 
