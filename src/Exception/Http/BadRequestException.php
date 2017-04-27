@@ -34,6 +34,8 @@ class BadRequestException extends RuntimeException implements ExceptionInterface
     const UNAUTHORIZED = 401;
     const NOT_ALLOWED = 405;
     const UNPROCESSABLE = 422;
+    const CONFLICT = 409;
+    const ENTITY_EXISTS = 409;
 
     public function __construct($message, $code = self::BAD_REQUEST, $previous = null)
     {
