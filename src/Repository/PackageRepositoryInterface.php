@@ -29,6 +29,7 @@ use Rampage\Nexus\Package\PackageInterface;
  * Repository for entities implementing PackageInterface
  *
  * @see PackageInterface    Package interface
+ * @method PackageInterface findOne($id)
  */
 interface PackageRepositoryInterface extends RepositoryInterface
 {
