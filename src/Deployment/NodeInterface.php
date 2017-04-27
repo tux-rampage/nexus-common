@@ -24,7 +24,9 @@ namespace Rampage\Nexus\Deployment;
 
 use Rampage\Nexus\Entities\ApplicationInstance;
 use Rampage\Nexus\Entities\DeployTarget;
+
 use Rampage\Nexus\Exception\LogicException;
+use Rampage\Nexus\Exception\RuntimeException;
 
 
 /**
@@ -91,7 +93,7 @@ interface NodeInterface
      * the whole node.
      *
      * @param   ApplicationInstance $application    If provided, only rebuild this application instance
-     * @throws  LogicException                      When the node or application cannot be rebuild
+     * @throws  RuntimeException                    When the node or application cannot be rebuild
      */
     public function rebuild(ApplicationInstance $application = null);
 
