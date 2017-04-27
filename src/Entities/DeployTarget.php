@@ -27,12 +27,17 @@ use Rampage\Nexus\Deployment\NodeInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Zend\Stdlib\Parameters;
+use Rampage\Nexus\Exception\InvalidArgumentException;
 
 /**
  * Persistable deploy target
  */
 class DeployTarget
 {
+    const STATE_PENDING = 'pending';
+    const STATE_WORKING = 'working';
+    const STATE_ERROR = 'error';
+
     /**
      * Target identifier
      *
@@ -69,6 +74,13 @@ class DeployTarget
     protected $applications;
 
     /**
+     * The aggregated state for this target
+     *
+     * @var string
+     */
+    protected $state = self::STATE_PENDING;
+
+    /**
      * Maps the application status levels
      *
      * @var int[]
@@ -79,7 +91,7 @@ class DeployTarget
         ApplicationInstance::STATE_INACTIVE => 4,
         ApplicationInstance::STATE_DEPLOYED => 8,
         ApplicationInstance::STATE_ERROR => 16,
-        'working' => 32,
+        self::STATE_WORKING => 32,
     ];
 
     /**
@@ -137,6 +149,10 @@ class DeployTarget
      */
     public function addVHost(VHost $host)
     {
+        if ($this->hasVHostName($host->getName())) {
+            throw new LogicException('Duplicate vhost name');
+        }
+
         $this->vhosts[$host->getId()] = $host;
         return $this;
     }
@@ -147,11 +163,24 @@ class DeployTarget
      */
     public function getVHost($id)
     {
-        if (isset($this->vhosts[$id])) {
+        if ($id && isset($this->vhosts[$id])) {
             return $this->vhosts[$id];
         }
 
         return null;
+    }
+
+    /**
+     * Check if there is a vhost with the given name
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function hasVHostName($name)
+    {
+        return $this->vhosts->exists(function(VHost $item) use ($name) {
+            return ($item->getName() == $name);
+        });
     }
 
     /**
@@ -196,7 +225,7 @@ class DeployTarget
     protected function mapState($state)
     {
         if (isset($this->workingStates[$state])) {
-            return 'working';
+            return self::STATE_WORKING;
         }
 
         return $state;
@@ -237,6 +266,32 @@ class DeployTarget
         foreach ($this->applications as $application) {
             $this->updateApplicationState($application);
         }
+
+        $this->aggregateState();
+    }
+
+    /**
+     * Aggregates the state from all applications
+     *
+     * @return string
+     */
+    public function aggregateState()
+    {
+        $this->state = self::STATE_PENDING;
+
+        foreach ($this->applications as $application) {
+            $state = $application->getState();
+
+            // Any working node causes the state working
+            if ($state == self::STATE_WORKING) {
+                $this->state = self::STATE_WORKING;
+                break;
+            } else if ($state == ApplicationInstance::STATE_ERROR) {
+                $this->state = self::STATE_ERROR;
+            }
+        }
+
+        return $this->state;
     }
 
     /**
@@ -264,7 +319,7 @@ class DeployTarget
             $nodeLevel = $this->mapStateAggregationLevel($mappedState);
 
             if ($level < $nodeLevel) {
-                $state = $mappedState;
+                $state = $nodeState;
                 $level = $nodeLevel;
             }
         }
@@ -329,6 +384,28 @@ class DeployTarget
     public function removeApplication(ApplicationInstance $instance)
     {
         $instance->remove();
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     * @return self
+     */
+    public function setState($state)
+    {
+        if (!in_array($state, [self::STATE_ERROR, self::STATE_PENDING, self::STATE_WORKING])) {
+            throw new InvalidArgumentException('Invalid deploy target state: ' . $state);
+        }
+
+        $this->state = $state;
         return $this;
     }
 

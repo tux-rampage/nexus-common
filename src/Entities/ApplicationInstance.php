@@ -49,6 +49,7 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     const STATE_DEACTIVATING = 'deactivating';
     const STATE_REMOVED = 'removed';
     const STATE_INACTIVE = 'inactive';
+    const STATE_WORKING = 'working'; // Aggregated state
     const STATE_UNKNOWN = 'unknown';
 
     use ArrayOrTraversableGuardTrait;
@@ -184,7 +185,7 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     /**
      * Returns the VHost ID for this applciation
      *
-     * @return string
+     * @return string|null
      */
     public function getVHost()
     {
@@ -371,8 +372,6 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
         $this->label = $data->get('label');
         $this->flavor = $data->get('flavor');
 
-        $this->setUserParameters($data->get('userParameters'));
-
         if ($packageId) {
             $package = $this->application->findPackage($packageId);
 
@@ -387,6 +386,7 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
             $this->setPackage($package);
         }
 
+        $this->setUserParameters($data->get('userParameters'));
         return $this;
     }
 
