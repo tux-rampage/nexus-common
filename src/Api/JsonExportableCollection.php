@@ -124,7 +124,7 @@ class JsonExportableCollection implements JsonSerializable, IteratorAggregate
             $item = $this->exportCollectionItemToArray($item);
 
             if (!$this->acceptExportedItem($item)) {
-                throw new UnexpectedValueException(sprintf('Expected collection item to be an array or array representative. Got %s', is_object($item)? get_class($item) : gettype($item)));
+                throw new UnexpectedValueException(sprintf('Expected collection item to be an array, ArrayObject or implement JsonSerializable. Got %s', is_object($item)? get_class($item) : gettype($item)));
             }
 
             $result['items'][] = $item;
