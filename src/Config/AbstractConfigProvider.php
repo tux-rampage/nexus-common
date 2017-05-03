@@ -31,11 +31,6 @@ use ArrayObject;
 abstract class AbstractConfigProvider implements ConfigProviderInterface
 {
     /**
-     * @var string
-     */
-    protected $key = 'master';
-
-    /**
      * @return string[]|callable[]
      */
     abstract protected function getProviders();
@@ -43,10 +38,7 @@ abstract class AbstractConfigProvider implements ConfigProviderInterface
     /**
      * @return string|null
      */
-    protected function getGeneratedFilePath()
-    {
-        return null;
-    }
+    abstract protected function getGeneratedFilePath();
 
     /**
      * {@inheritDoc}
