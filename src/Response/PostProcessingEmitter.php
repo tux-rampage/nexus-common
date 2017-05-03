@@ -28,7 +28,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Implements an emitter that will trigger actions after the response was emitted
+ * Implements a decorating emitter that will trigger actions after the response was emitted
  */
 final class PostProcessingEmitter implements EmitterInterface
 {
@@ -112,8 +112,9 @@ final class PostProcessingEmitter implements EmitterInterface
     {
         $result = $this->emitter->emit($response);
 
+        $this->finishRequest();
+
         if ($this->postProcessors->count() > 0) {
-            $this->finishRequest();
             $this->executePostProcessingActions();
         }
 

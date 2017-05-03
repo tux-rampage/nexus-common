@@ -22,12 +22,12 @@
 
 namespace Rampage\Nexus\Response;
 
-use Rampage\Nexus\Exception\RuntimeException;
-
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitterTrait;
+
 
 /**
  * SAPI Stream emitter
@@ -51,18 +51,31 @@ final class SapiStreamEmitter implements EmitterInterface
     }
 
     /**
+     * @param StreamInterface $body
+     * @return bool
+     */
+    private function acceptBody($body)
+    {
+        if (!$body instanceof StreamInterface) {
+            return false;
+        }
+
+        return (
+            $body->isReadable() &&
+            $body->isSeekable() &&
+            ($body->getMetadata('stream_type') === null)
+        );
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Zend\Diactoros\Response\EmitterInterface::emit()
      */
     public function emit(ResponseInterface $response)
     {
-        if (headers_sent()) {
-            throw new RuntimeException('Unable to emit response; headers already sent');
-        }
-
         $body = $response->getBody();
 
-        if (!$body || !$body->isSeekable()) {
+        if (headers_sent() || !$this->acceptBody($body)) {
             return false;
         }
 
@@ -72,7 +85,10 @@ final class SapiStreamEmitter implements EmitterInterface
         $this->emitStatusLine($response);
         $this->emitHeaders($response);
         $this->clearBuffers();
-        fpassthru($stream);
+
+        if (is_resource($stream)) {
+            fpassthru($stream);
+        }
 
         return true;
     }
