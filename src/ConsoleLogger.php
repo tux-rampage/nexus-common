@@ -24,8 +24,9 @@ namespace Rampage\Nexus;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
-use Symfony\Component\Console\Output\OutputInterface;
 use Psr\Log\LogLevel;
+
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 
