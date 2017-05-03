@@ -25,6 +25,8 @@ namespace Rampage\Nexus\Middleware;
 use Zend\Stratigility\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Rampage\Nexus\StringStream;
+use Rampage\Nexus\NullStream;
 
 /**
  * Implements a middleware that will attempt to delegate file delivery responses
@@ -62,6 +64,23 @@ class WebserverSendfileMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Create a sendfile response that deligates to the webserver
+     *
+     * @param ResponseInterface $response
+     * @param string $streamUrl
+     * @param string $fromPath
+     * @param string $toPath
+     * @return ResponseInterface
+     */
+    private function sendFile($response, $streamUrl, $fromPath, $toPath)
+    {
+        $location = $toPath . substr($streamUrl, strlen($fromPath));
+
+        return $response->withBody(new NullStream())
+                        ->withHeader('X-Accel-Redirect', $location);
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
      */
@@ -84,7 +103,6 @@ class WebserverSendfileMiddleware implements MiddlewareInterface
 
         foreach ($this->mapping as $fromPath => $toPath) {
             if (strpos($streamUrl, $fromPath) === 0) {
-                // FIXME: Implement sendFile method
                 return $this->sendFile($response, $streamUrl, $fromPath, $toPath);
             }
         }
