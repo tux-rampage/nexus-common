@@ -23,27 +23,73 @@
 namespace Rampage\Nexus\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Zend\Stratigility\MiddlewareInterface;
-
+use Psr\Http\Message\StreamInterface;
+use Rampage\Nexus\Exception\RuntimeException;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 
 /**
  * Parses the request body according to the content type
  */
 class ParseRequestMiddleware implements MiddlewareInterface
 {
-    use DecodeJsonTrait;
+    /**
+     * Checks the content type if it is suitable for JSON
+     *
+     * @param   string  $contentType    The content type / mime type
+     * @return  boolean                 True if the content type designates JSON data, false otherwise
+     */
+    protected function isJsonType($contentType)
+    {
+        return (bool)preg_match('~^application/json(;|$)~i', $contentType);
+    }
+
+    /**
+     * Returns the data array from JSON encoded body
+     *
+     * @param   RequestInterface    $request
+     * @throws  UnexpectedValueException
+     * @return  array
+     */
+    private function decodeJson($body)
+    {
+        if ($body instanceof StreamInterface) {
+            $body = $body->getContents();
+        }
+
+        $data = json_decode($body, true);
+
+        if (!is_array($data)) {
+            throw new RuntimeException('Failed to parse JSON body: ' . json_last_error_msg());
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    protected function parseRequestBody(ServerRequestInterface $request)
+    {
+        $contentType = $request->getHeaderLine('Content-Type');
+
+        if (!$this->isJsonType($contentType)) {
+            return $request;
+        }
+
+        $data = $this->decodeJson($request->getBody());
+        return $request->withParsedBody($data);
+    }
+
 
     /**
      * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
+     * @see \Interop\Http\ServerMiddleware\MiddlewareInterface::process()
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    public function process(\Psr\Http\Message\ServerRequestInterface $request, \Interop\Http\ServerMiddleware\DelegateInterface $delegate)
     {
         $request = $this->parseRequestBody($request);
-
-        if ($out) {
-            return $out($request, $response);
-        }
+        return $delegate->process($request);
     }
 }

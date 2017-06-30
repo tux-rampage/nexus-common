@@ -26,8 +26,8 @@ use Zend\Crypt\Password\PasswordInterface;
 use Zend\Crypt\Password\Bcrypt as BcryptPasswordStrategy;
 
 return [
-    'di' => [
-        'preferences' => [
+    'dependencies' => [
+        'aliases' => [
             FileSystemInterface::class => FileSystem::class,
 
             Package\Installer\InstallerProviderInterface::class => Package\Installer\InstallerManager::class,

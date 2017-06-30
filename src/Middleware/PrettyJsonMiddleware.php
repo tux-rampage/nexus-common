@@ -23,9 +23,10 @@
 namespace Rampage\Nexus\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Zend\Stratigility\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\Stream;
 
 /**
  * Middleware that allows pretty printing json responses
@@ -45,21 +46,21 @@ class PrettyJsonMiddleware implements MiddlewareInterface
      * {@inheritDoc}
      * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
-        $response = $out($request, $response);
+        $response = $delegate->process($request);
 
         if (!($response instanceof JsonResponse) || !$this->isPrettyRequested($request)) {
             return $response;
         }
 
-        $pretty = new JsonResponse(
-            json_decode($response->getBody()->__toString()),
-            $response->getStatusCode(),
-            $response->getHeaders(),
-            JsonResponse::DEFAULT_JSON_FLAGS | JSON_PRETTY_PRINT
-        );
+        $json = (string)$response->getBody();
+        $pretty = json_encode(json_decode($json), JsonResponse::DEFAULT_JSON_FLAGS | JSON_PRETTY_PRINT);
+        $stream = new Stream('php://temp', 'wb+');
 
-        return $pretty->withStatus($response->getStatusCode(), $response->getReasonPhrase());
+        $stream->write($pretty);
+        $stream->rewind();
+
+        return $response->withBody($stream);
     }
 }
