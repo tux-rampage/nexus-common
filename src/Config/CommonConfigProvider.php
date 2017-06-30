@@ -23,7 +23,6 @@
 namespace Rampage\Nexus\Config;
 
 use Zend\Di\ConfigProvider as DiConfigProvider;
-use Zend\Stdlib\Parameters;
 
 /**
  * Implements the common config provider
@@ -31,16 +30,12 @@ use Zend\Stdlib\Parameters;
 class CommonConfigProvider extends AbstractConfigProvider
 {
     /**
-     * @var Parameters
+     * {@inheritDoc}
+     * @see \Rampage\Nexus\Config\AbstractConfigProvider::__construct()
      */
-    private $server;
-
-    /**
-     * @param array $server
-     */
-    public function __construct(array $server = null)
+    public function __construct(array $env = null)
     {
-        $this->server = new Parameters($server? : $_SERVER);
+        parent::__construct($env);
     }
 
     /**
@@ -54,7 +49,7 @@ class CommonConfigProvider extends AbstractConfigProvider
             new PhpDirectoryProvider(__DIR__ . '/../../config'),
         ];
 
-        if ($this->server->get('APPLICATION_DEVELOPMENT')) {
+        if ($this->devMode) {
             $providers[] = new WhoopsConfigProvider();
         }
 

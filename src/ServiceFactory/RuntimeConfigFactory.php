@@ -23,16 +23,14 @@
 namespace Rampage\Nexus\ServiceFactory;
 
 use Rampage\Nexus\Config\ArrayConfig;
-
 use Interop\Container\ContainerInterface;
-
 use Zend\Config\Factory as ZendConfigFactory;
+use Zend\ConfigAggregator\ConfigAggregator;
+use Zend\ConfigAggregator\ZendConfigProvider;
 use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Expressive\ConfigManager\ConfigManager;
-use Zend\Expressive\ConfigManager\ZendConfigProvider;
-
-use Phar;
 use Zend\Stdlib\Parameters;
+use Phar;
+
 
 /**
  * Factory for loading the runtime config
@@ -68,7 +66,7 @@ class RuntimeConfigFactory implements FactoryInterface
         $defaultPrefix = Phar::running()? '/etc/php-deployment' : __DIR__ . '/../../etc';
         $prefix = $data->get('config_dir', $defaultPrefix)? : $defaultPrefix;
 
-        $configManager = new ConfigManager([
+        $configManager = new ConfigAggregator([
             function() use ($data) {
                 return $data->getArrayCopy();
             },

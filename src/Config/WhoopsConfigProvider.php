@@ -22,6 +22,11 @@
 
 namespace Rampage\Nexus\Config;
 
+use Zend\Expressive\Middleware\ErrorResponseGenerator;
+use Zend\Expressive\Container\WhoopsErrorResponseGeneratorFactory;
+use Zend\Expressive\Container\WhoopsFactory;
+use Zend\Expressive\Container\WhoopsPageHandlerFactory;
+
 /**
  * Implements a config provider for dev handling
  */
@@ -38,12 +43,10 @@ class WhoopsConfigProvider
 
         return [
             'dependencies' => [
-                'invokables' => [
-                    'Zend\Expressive\Whoops' => 'Whoops\Run',
-                    'Zend\Expressive\WhoopsPageHandler' => 'Whoops\Handler\PrettyPageHandler',
-                ],
                 'factories' => [
-                    'Zend\Expressive\FinalHandler' => 'Zend\Expressive\Container\WhoopsErrorHandlerFactory',
+                    ErrorResponseGenerator::class => WhoopsErrorResponseGeneratorFactory::class,
+                    'Zend\Expressive\Whoops' => WhoopsFactory::class,
+                    'Zend\Expressive\WhoopsPageHandler' => WhoopsPageHandlerFactory::class,
                 ],
             ],
 

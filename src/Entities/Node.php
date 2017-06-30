@@ -31,6 +31,7 @@ use Rampage\Nexus\Exception\LogicException;
 
 use Zend\Stdlib\Parameters;
 use Traversable;
+use Zend\Crypt\PublicKey\Rsa\PublicKey;
 
 
 /**
@@ -90,7 +91,7 @@ class Node implements NodeInterface, ArrayExchangeInterface
     /**
      * The node's public key
      *
-     * @var PublicK
+     * @var string
      */
     protected $publicKey = null;
 
@@ -420,8 +421,7 @@ class Node implements NodeInterface, ArrayExchangeInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::getPublicKey()
+     * @return string
      */
     public function getPublicKey()
     {

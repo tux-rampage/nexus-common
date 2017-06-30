@@ -27,8 +27,16 @@ namespace Rampage\Nexus\Config;
  */
 class PhpDirectoryProvider
 {
+    /**
+     * @var Path to the directory to aggregate
+     */
     private $directory;
 
+    /**
+     * Filename Suffix
+     *
+     * @var string
+     */
     private $suffix;
 
     /**

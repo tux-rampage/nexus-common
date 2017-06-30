@@ -24,7 +24,7 @@ namespace Rampage\Nexus;
 
 use Rampage\Nexus\Config\ConfigProviderInterface;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application as ConsoleApplication;
 
 use Zend\Expressive\Application as HttpApplication;
@@ -35,13 +35,18 @@ use Zend\ServiceManager\Config as ServiceConfig;
 /**
  * Default application instance
  */
-class Bootstrap
+trait BootstrapTrait
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @param ConfigProviderInterface $configProvider
      * @return ContainerInterface
      */
-    protected function createContainer(ConfigProviderInterface $configProvider)
+    private function createContainer(ConfigProviderInterface $configProvider)
     {
         $config = $configProvider->getConfig();
         $container = new ServiceManager();
@@ -56,17 +61,28 @@ class Bootstrap
     }
 
     /**
-     * @param ConfigProviderInterface $configProvider
-     * @return Application
+     * Returns the IoC Container
+     *
+     * @return ContainerInterface
      */
-    public function app(ConfigProviderInterface $configProvider)
+    public function getContainer()
     {
-        $container = $this->createContainer($configProvider);
+        return $this->container;
+    }
 
-        if (PHP_SAPI == 'cli') {
-            return $container->get(ConsoleApplication::class);
-        }
+    /**
+     * @return HttpApplication
+     */
+    public function getHttpApp()
+    {
+        return $this->container->get(HttpApplication::class);
+    }
 
-        return $container->get(HttpApplication::class);
+    /**
+     * @return ConsoleApplication
+     */
+    public function getConsoleApp()
+    {
+        return $this->container->get(ConsoleApplication::class);
     }
 }

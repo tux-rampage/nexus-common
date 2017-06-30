@@ -24,6 +24,8 @@ namespace Rampage\Nexus;
 
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Zend\Crypt\PublicKey\Rsa\PrivateKey;
+use Zend\Crypt\Password\PasswordInterface;
+use Zend\Crypt\Password\Bcrypt as BcryptPasswordStrategy;
 use Zend\Diactoros\Response\EmitterInterface;
 
 
@@ -35,6 +37,23 @@ return [
             PrivateKey::class => ServiceFactory\PrivateKeyFactory::class,
             Archive\ArchiveLoader::class => ServiceFactory\ArchiveLoaderFactory::class,
             'RuntimeConfig' => ServiceFactory\RuntimeConfigFactory::class,
+        ],
+
+        'aliases' => [
+            FileSystemInterface::class => FileSystem::class,
+
+            Package\Installer\InstallerProviderInterface::class => Package\Installer\InstallerManager::class,
+            Archive\ArchiveLoaderInterface::class => Archive\ArchiveLoader::class,
+
+            Api\RequestSignatureInterface::class => Api\PublicKeySignature::class,
+            Api\SignRequestInterface::class => Api\PublicKeySignature::class,
+
+            PasswordInterface::class => BcryptPasswordStrategy::class,
+            Config\PropertyConfigInterface::class => 'RuntimeConfig',
+        ],
+
+        'instances' => [
+            'RuntimeConfig' => [ 'aliasOf' => Config\ArrayConfig::class ],
         ],
     ],
 ];

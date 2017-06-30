@@ -83,9 +83,8 @@ class PublicKeySignature implements RequestSignatureInterface, SignRequestInterf
         $info = [
             $request->getMethod(),
             $request->getUri()->getPath(),
-            $request->getUri()->getHost(),
-            $request->getHeaderLine('User-Agent'),
             $request->getHeaderLine('Date'),
+            $request->getHeaderLine('User-Agent')
         ];
 
         if (is_string($data) && ($data != '')) {
