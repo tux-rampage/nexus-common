@@ -26,7 +26,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Diactoros\Stream;
+
 
 /**
  * Middleware that allows pretty printing json responses
@@ -50,17 +50,10 @@ class PrettyJsonMiddleware implements MiddlewareInterface
     {
         $response = $delegate->process($request);
 
-        if (!($response instanceof JsonResponse) || !$this->isPrettyRequested($request)) {
-            return $response;
+        if (($response instanceof JsonResponse) && $this->isPrettyRequested($request)) {
+            $response = $response->withEncodingOptions(JsonResponse::DEFAULT_JSON_FLAGS | JSON_PRETTY_PRINT);
         }
 
-        $json = (string)$response->getBody();
-        $pretty = json_encode(json_decode($json), JsonResponse::DEFAULT_JSON_FLAGS | JSON_PRETTY_PRINT);
-        $stream = new Stream('php://temp', 'wb+');
-
-        $stream->write($pretty);
-        $stream->rewind();
-
-        return $response->withBody($stream);
+        return $response;
     }
 }
