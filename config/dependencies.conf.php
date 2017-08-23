@@ -41,8 +41,6 @@ return [
 
         'aliases' => [
             FileSystemInterface::class => FileSystem::class,
-
-            Package\Installer\InstallerProviderInterface::class => Package\Installer\InstallerManager::class,
             Archive\ArchiveLoaderInterface::class => Archive\ArchiveLoader::class,
 
             Api\RequestSignatureInterface::class => Api\PublicKeySignature::class,
