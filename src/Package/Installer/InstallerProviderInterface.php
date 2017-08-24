@@ -36,4 +36,11 @@ interface InstallerProviderInterface
      * @return InstallerInterface
      */
     public function getInstaller(PackageInterface $package);
+
+    /**
+     * Returns all package types for which installers are available
+     *
+     * @return string[]
+     */
+    public function getSupportedPackageTypes();
 }
