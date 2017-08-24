@@ -22,6 +22,7 @@
 
 namespace Rampage\Nexus;
 
+use Phar;
 use DateTime;
 
 /**
@@ -78,15 +79,22 @@ final class Version
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    private function loadFromInfoFile()
+    private function loadFromPhar()
     {
-        if (is_readable(__DIR__ . '/../resources/version.info')) {
-            return trim(file_get_contents(__DIR__ . '/../resources/version.info'));
+        $pharFile = Phar::running(false);
+
+        if (!$pharFile) {
+            return null;
         }
 
-        return null;
+        $metadata = (new Phar($pharFile))->getMetadata();
+        if (!$metadata || !isset($metadata['build']['version'])) {
+            return null;
+        }
+
+        return $metadata['build']['version'];
     }
 
     /**
@@ -150,7 +158,7 @@ final class Version
      */
     protected function discover()
     {
-        $version = $this->loadFromInfoFile();
+        $version = $this->loadFromPhar();
 
         if ($version) {
             return $version;
