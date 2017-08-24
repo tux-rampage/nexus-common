@@ -31,7 +31,6 @@ use Rampage\Nexus\Exception\LogicException;
 
 use Zend\Stdlib\Parameters;
 use Traversable;
-use Zend\Crypt\PublicKey\Rsa\PublicKey;
 
 
 /**
@@ -40,8 +39,6 @@ use Zend\Crypt\PublicKey\Rsa\PublicKey;
 class Node implements NodeInterface, ArrayExchangeInterface
 {
     /**
-     * The unique node identifier
-     *
      * @var string
      */
     private $id = null;
@@ -54,15 +51,11 @@ class Node implements NodeInterface, ArrayExchangeInterface
     protected $name = null;
 
     /**
-     * Node type
-     *
      * @var string
      */
     protected $type;
 
     /**
-     * The deploy target, this node is attached to
-     *
      * @var DeployTarget
      */
     protected $deployTarget = null;
@@ -75,29 +68,23 @@ class Node implements NodeInterface, ArrayExchangeInterface
     protected $url = null;
 
     /**
-     * The nodes deploy state
-     *
      * @var string
      */
     protected $state = self::STATE_UNINITIALIZED;
 
     /**
-     * The current application states
+     * The current application states indexed by app id
      *
      * @var string[]
      */
     protected $applicationStates = [];
 
     /**
-     * The node's public key
-     *
      * @var string
      */
-    protected $publicKey = null;
+    protected $secret = null;
 
     /**
-     * Server information
-     *
      * @var array
      */
     protected $serverInfo = [];
@@ -423,9 +410,9 @@ class Node implements NodeInterface, ArrayExchangeInterface
     /**
      * @return string
      */
-    public function getPublicKey()
+    public function getSecret()
     {
-        return $this->publicKey;
+        return $this->secret;
     }
 
     /**
