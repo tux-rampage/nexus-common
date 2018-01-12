@@ -2,6 +2,7 @@
 /.settings
 /.project
 /.buildpath
+/.idea
 
 # Dependencies
 /vendor
