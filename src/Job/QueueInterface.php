@@ -35,7 +35,7 @@ interface QueueInterface extends LoggerAwareInterface
      * @param   JobInterface    $job
      * @return  void
      */
-    public function schedule(JobInterface $job);
+    public function schedule(JobInterface $job): void;
 
     /**
      * Request cancellation of the given job
@@ -45,5 +45,5 @@ interface QueueInterface extends LoggerAwareInterface
      * @param   JobInterface    $job
      * @return  void
      */
-    public function cancel(JobInterface $job);
+    public function cancel(JobInterface $job): void;
 }

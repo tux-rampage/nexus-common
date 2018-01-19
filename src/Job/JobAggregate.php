@@ -22,11 +22,10 @@
 
 namespace Rampage\Nexus\Job;
 
-use Rampage\Nexus\Exception\UnexpectedValueException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Rampage\Nexus\Exception\UnexpectedValueException;
 use Zend\Stdlib\SplPriorityQueue;
-
 
 /**
  * Implements a job sequence aggregation
@@ -46,38 +45,32 @@ class JobAggregate implements JobInterface, ContainerAwareInterface, LoggerAware
      */
     private $priority;
 
-    /**
-     * Constructor
-     */
-    public function __construct($priority = 1)
+
+    public function __construct(int $priority = 1)
     {
         $this->priority = (int)$priority;
         $this->jobs = new SplPriorityQueue();
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Jobs\QueueInterface::schedule()
+     * Adds a job tho this aggregation
+     *
+     * @param JobInterface $job
      */
-    public function add(JobInterface $job)
+    public function add(JobInterface $job): void
     {
         $this->jobs->insert($job, $job->getPriority());
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Job\JobInterface::getPriority()
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
 
     /**
-     * {@inheritDoc}
-     * @see Serializable::serialize()
+     * {@inheritdoc}
      */
-    public function serialize()
+    public function serialize(): string
     {
         $queue = clone $this->jobs;
         $data = [
@@ -96,12 +89,11 @@ class JobAggregate implements JobInterface, ContainerAwareInterface, LoggerAware
     }
 
     /**
-     * {@inheritDoc}
-     * @see Serializable::unserialize()
+     * {@inheritdoc}
      */
     public function unserialize($serialized)
     {
-        $data = json_decode($serialized);
+        $data = json_decode((string)$serialized);
 
         if (!isset($data->p) || !isset($data->j) || !is_array($data->j)) {
             throw new UnexpectedValueException('Serialized job aggregation segmentation invalid');
@@ -125,9 +117,9 @@ class JobAggregate implements JobInterface, ContainerAwareInterface, LoggerAware
     }
 
     /**
-     * @param JobInterface $job
+     * Prepare the given job for execution
      */
-    protected function prepareJob(JobInterface $job)
+    private function prepareJob(JobInterface $job): void
     {
         if ($this->container && ($job instanceof ContainerAwareInterface)) {
             $job->setContainer($this->container);
@@ -139,10 +131,9 @@ class JobAggregate implements JobInterface, ContainerAwareInterface, LoggerAware
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Job\JobInterface::run()
+     * Runs all aggregated jobs in sequence
      */
-    public function run()
+    public function run(): void
     {
         foreach ($this->jobs as $job) {
             $this->prepareJob($job);

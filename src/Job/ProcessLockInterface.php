@@ -22,8 +22,6 @@
 
 namespace Rampage\Nexus\Job;
 
-use Rampage\Nexus\Exception\LockTimeoutException;
-
 /**
  * Defines process locks
  */
@@ -32,25 +30,21 @@ interface ProcessLockInterface
     /**
      * Aquire a lock
      *
-     * If the lock is already occupied, this method will block until
-     * the lock can be aquired
+     * If the lock is already occupied, this method will return false
      *
-     * @throws  LockTimeoutException
      * @return  void
      */
-    public function lock();
+    public function lock(): bool;
 
     /**
      * Release (a previously aqiured lock)
-     *
-     * @return void
      */
-    public function unlock();
+    public function unlock(): void;
 
     /**
      * Check if the lock is occupied
      *
      * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 }

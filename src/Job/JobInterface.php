@@ -37,13 +37,14 @@ interface JobInterface extends Serializable
      *
      * @return  int The job priority
      */
-    public function getPriority();
+    public function getPriority(): int;
 
     /**
      * Execute the job
      *
-     * @throws  \Throwable  This method may throw any exception. It's up to the Queue/Scheduler implementation to handle it properly
+     * @throws  \Throwable  This method may throw any exception. It's up to the Queue/Scheduler implementation to
+     *                      handle it properly
      * @return void
      */
-    public function run();
+    public function run(): void;
 }

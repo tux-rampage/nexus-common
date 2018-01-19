@@ -45,7 +45,7 @@ final class NullStream implements StreamInterface
      * {@inheritDoc}
      * @see \Psr\Http\Message\StreamInterface::__toString()
      */
-    public function __toString()
+    public function __toString(): string
     {
         return '';
     }

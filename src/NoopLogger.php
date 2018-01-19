@@ -22,82 +22,13 @@
 
 namespace Rampage\Nexus;
 
-use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * A logger that does nothing
+ *
+ * @deprecated Use \Psr\Log\NullLogger
  */
-class NoopLogger implements LoggerInterface
+final class NoopLogger extends NullLogger
 {
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::alert()
-     */
-    public function alert($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::critical()
-     */
-    public function critical($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::debug()
-     */
-    public function debug($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::emergency()
-     */
-    public function emergency($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::error()
-     */
-    public function error($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::info()
-     */
-    public function info($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::log()
-     */
-    public function log($level, $message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::notice()
-     */
-    public function notice($message, array $context = array())
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Psr\Log\LoggerInterface::warning()
-     */
-    public function warning($message, array $context = array())
-    {
-    }
 }

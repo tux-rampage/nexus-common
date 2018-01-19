@@ -106,9 +106,9 @@ class Executable
      *
      * @param   string  $command            The shell command to executable
      * @param   array   $args               Additional arguments appended to the command
-     * @param   string  $keepEnvironment    Flag to keep the current environment variables
+     * @param   bool    $keepEnvironment    Flag to keep the current environment variables
      */
-    public function __construct($command, array $args = array(), $keepEnvironment = true)
+    public function __construct(string $command, array $args = [], bool $keepEnvironment = true)
     {
         $this->command = $command;
         $this->setArgs($args);
@@ -125,7 +125,7 @@ class Executable
      *
      * The resource to the process, if still running, will be lost.
      * The behavior depends on the os whether the process is terminated
-     * or detatched.
+     * or detached.
      */
     public function __destruct()
     {
@@ -176,7 +176,7 @@ class Executable
      * @param   string                      $value  The value to set. This is ignored when $env is an array or `Traversable`.
      * @return  self                                Provides a fluent interface
      */
-    public function setEnv($env, $value = null)
+    public function setEnv($env, string $value = null)
     {
         if (is_array($env) || ($env instanceof \Traversable)) {
             foreach ($env as $key => $value) {
@@ -186,7 +186,7 @@ class Executable
             return $this;
         }
 
-        $this->env[$env] = (string)$value;
+        $this->env[$env] = $value;
         return $this;
     }
 
@@ -216,9 +216,9 @@ class Executable
      * @param   string      $arg    The argument to add
      * @return  self                Provides a fluent interface
      */
-    public function addArg($arg)
+    public function addArg(string $arg)
     {
-        $this->args[] = (string)$arg;
+        $this->args[] = $arg;
         return $this;
     }
 
@@ -228,7 +228,7 @@ class Executable
      * @return  int     The exit code. If the command was not yet executed,
      *                  this will return `null`.
      */
-    public function getReturnCode($wait = false)
+    public function getReturnCode(bool $wait = false): ?int
     {
         if (!$wait || ($this->returnCode !== null)) {
             return $this->returnCode;
@@ -242,7 +242,7 @@ class Executable
      *
      * @return array
      */
-    protected function getDescriptorSpec()
+    protected function getDescriptorSpec(): array
     {
         if ($this->output === null) {
             $this->setOutput('php://temp');
@@ -263,10 +263,8 @@ class Executable
      * Ensures the input is processed
      *
      * This will simply close the `STDIN` pipe.
-     *
-     * @return string
      */
-    protected function processInput()
+    protected function processInput(): void
     {
         $this->closePipe(0);
     }
@@ -274,7 +272,7 @@ class Executable
     /**
      * Closes all open pipes
      */
-    protected function closeAllPipes()
+    protected function closeAllPipes(): void
     {
         foreach ($this->pipes as $index => $pipe) {
             if ($pipe === null) {
@@ -290,18 +288,15 @@ class Executable
      * Closes a specific pipe
      *
      * @param   int     $index  The index of the pipe to close
-     * @return  self
      */
-    protected function closePipe($index)
+    protected function closePipe($index): void
     {
         if (!isset($this->pipes[$index]) || ($this->pipes[$index] === null)) {
-            continue;
+            return;
         }
 
         @fclose($this->pipes[$index]);
         $this->pipes[$index] = null;
-
-        return $this;
     }
 
     /**
@@ -312,7 +307,7 @@ class Executable
      * @throws  Exception\BadMethodCallException    When the command was not executed
      * @return  int                                 The exit code of the command
      */
-    protected function close()
+    protected function close(): int
     {
         if ($this->process === null) {
             throw new Exception\BadMethodCallException('No process to get a return value from');

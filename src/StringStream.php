@@ -41,6 +41,4 @@ class StringStream extends Stream
 
         parent::__construct($stream);
     }
-
-
 }

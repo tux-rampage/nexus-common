@@ -22,19 +22,18 @@
 
 namespace Rampage\Nexus\Job;
 
-use Rampage\Nexus\NoopLogger;
-
-use Psr\Log\LoggerAwareTrait;
-
-use SplPriorityQueue;
-use SplObjectStorage;
-use Throwable;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerAwareInterface;
-
+use Psr\Log\LoggerAwareTrait;
+use Rampage\Nexus\NoopLogger;
+use SplObjectStorage;
+use SplPriorityQueue;
+use Throwable;
 
 /**
- * Implements a job queue that is processed after sending the resonse
+ * Implements a job queue that is processed after sending the response
+ *
+ * This is designated especially for php-fpm
  */
 class PostResponseQueue implements QueueInterface
 {
@@ -62,20 +61,12 @@ class PostResponseQueue implements QueueInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Jobs\QueueInterface::schedule()
-     */
-    public function schedule(JobInterface $job)
+    public function schedule(JobInterface $job): void
     {
         $this->jobs->attach($job);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Jobs\QueueInterface::cancel()
-     */
-    public function cancel(JobInterface $job)
+    public function cancel(JobInterface $job): void
     {
         $this->jobs->detach($job);
     }

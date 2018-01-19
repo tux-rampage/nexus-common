@@ -22,13 +22,12 @@
 
 namespace Rampage\Nexus\Job;
 
-use Interop\Container\ContainerInterface;
-
+use Psr\Container\ContainerInterface;
 
 /**
  * Interface for container aware job components
  */
 interface ContainerAwareInterface
 {
-    public function setContainer(ContainerInterface $container);
+    public function setContainer(ContainerInterface $container): void;
 }

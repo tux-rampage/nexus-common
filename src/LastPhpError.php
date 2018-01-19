@@ -24,6 +24,9 @@
 
 namespace Rampage\Nexus;
 
+/**
+ * @deprecated
+ */
 class LastPhpError
 {
     /**

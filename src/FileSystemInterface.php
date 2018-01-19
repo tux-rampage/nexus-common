@@ -34,9 +34,8 @@ interface FileSystemInterface
      * @param   string  $dir
      * @param   int     $mode
      * @throws  Exception\RuntimeException
-     * @return  self
      */
-    public function ensureDirectory($dir, $mode = null);
+    public function ensureDirectory(string $dir, int $mode = null): void;
 
     /**
      * Remove a file or a whole directory.
@@ -44,9 +43,9 @@ interface FileSystemInterface
      * Directories will be deleted recursively. This method will not follow symlinks
      *
      * @param   string  $fileOrDirectory
-     * @return  self
+     * @return  bool    Whether deletion was successful
      */
-    public function delete($fileOrDirectory);
+    public function delete(string $fileOrDirectory): bool;
 
     /**
      * Remove the contents of the given directory
@@ -54,9 +53,7 @@ interface FileSystemInterface
      * This will remove all files in the current directory, but not the directory itself
      *
      * @param   string  $dir    The directory to purge
-     * @return  self
-     *
      * @throws  Exception\RuntimeException  When the directory does not exists or the given path is not a directory
      */
-    public function purgeDirectory($dir);
+    public function purgeDirectory(string $dir): void;
 }

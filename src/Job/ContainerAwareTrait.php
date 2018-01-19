@@ -22,11 +22,10 @@
 
 namespace Rampage\Nexus\Job;
 
-use Interop\Container\ContainerInterface;
-
+use Psr\Container\ContainerInterface;
 
 /**
- * Trai to implement container awareness
+ * Implements container awareness
  */
 trait ContainerAwareTrait
 {
@@ -39,11 +38,9 @@ trait ContainerAwareTrait
      * Set the ioc container context
      *
      * @param   ContainerInterface  $container
-     * @return  self
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): void
     {
         $this->container = $container;
-        return $this;
     }
 }

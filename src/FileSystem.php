@@ -31,28 +31,14 @@ use RecursiveIteratorIterator;
  */
 class FileSystem implements FileSystemInterface
 {
-    /**
-     * Ensure existence of a directory
-     *
-     * @param string $dir
-     * @param int $mode
-     * @throws exceptions\RuntimeException
-     * @return self
-     */
-    public function ensureDirectory($dir, $mode = null)
+    public function ensureDirectory(string $dir, int $mode = null): void
     {
         if (!is_dir($dir) && !mkdir($dir, $mode? : 0755, true)) {
             throw new Exception\RuntimeException(sprintf('Failed to create directory: "%s"', $dir));
         }
-
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\FileSystemInterface::delete()
-     */
-    public function delete($fileOrDirectory)
+    public function delete(string $fileOrDirectory): bool
     {
         if (!is_dir($fileOrDirectory) || is_link($fileOrDirectory)) {
             return unlink($fileOrDirectory);
@@ -78,11 +64,7 @@ class FileSystem implements FileSystemInterface
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\FileSystemInterface::purgeDirectory()
-     */
-    public function purgeDirectory($dir)
+    public function purgeDirectory(string $dir): void
     {
         $iterator = new DirectoryIterator($dir);
 
@@ -93,7 +75,5 @@ class FileSystem implements FileSystemInterface
 
             $this->delete($file->getPathname());
         }
-
-        return $this;
     }
 }
