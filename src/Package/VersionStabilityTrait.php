@@ -24,6 +24,8 @@ namespace Rampage\Nexus\Package;
 
 trait VersionStabilityTrait
 {
+    abstract public function getVersion(): string;
+
     /**
      * Implements the stability check
      *
@@ -34,16 +36,10 @@ trait VersionStabilityTrait
      *  - A semantic version number denoted with dev, alpha, beta or rc
      *    i.e. 1.0.0-rc1
      *  - A semantic version with major version 0
-     *
-     * @return bool
      */
-    public function isStable()
+    public function isStable(): bool
     {
-        if (!$this instanceof PackageInterface) {
-            return false;
-        }
-
         $version = $this->getVersion();
-        return (bool)preg_match('/^dev-|^(\d+\.)*\d+-(dev|alpha|beta|rc)\.?\d*(\+([a-z0-9]+\.)?[a-z0-9]+)?$|^0\.\d/i', $version);
+        return !preg_match('/^dev-|^(\d+\.)*\d+-(dev|alpha|beta|rc)\.?\d*(\+([a-z0-9]+\.)?[a-z0-9]+)?$|^0\.\d/i', $version);
     }
 }

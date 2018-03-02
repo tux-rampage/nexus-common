@@ -41,33 +41,30 @@ class ConstraintCombination implements ConstraintInterface
     protected $constraints;
 
     /**
-     * @param ConstraintInterface[] $constraints
-     * @param unknown $type
+     * @param iterable|ConstraintInterface[] $constraints
      */
-    public function __construct(array $constraints = [], $type = self::TYPE_AND)
+    public function __construct(iterable $constraints = [], $type = self::TYPE_AND)
     {
         $this->type = $type;
         $this->constraints = array();
 
-        foreach ($this->constraints as $constraint) {
+        foreach ($constraints as $constraint) {
             $this->add($constraint);
         }
     }
 
     /**
      * @param ConstraintInterface $constraint
-     * @return self
      */
-    public function add(ConstraintInterface $constraint)
+    public function add(ConstraintInterface $constraint): void
     {
         $this->constraints[] = $constraint;
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function match($version)
+    public function match(string $version): bool
     {
         if ($this->type == self::TYPE_AND) {
             foreach ($this->constraints as $constraint) {

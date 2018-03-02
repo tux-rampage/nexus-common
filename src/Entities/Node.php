@@ -22,6 +22,7 @@
 
 namespace Rampage\Nexus\Entities;
 
+use phpDocumentor\Reflection\Types\Void_;
 use Rampage\Nexus\Deployment\NodeInterface;
 use Rampage\Nexus\Deployment\NodeStrategyInterface;
 use Rampage\Nexus\Deployment\NodeStrategyProviderInterface;
@@ -36,7 +37,7 @@ use Traversable;
 /**
  * Implements the default node entity
  */
-class Node implements NodeInterface, ArrayExchangeInterface
+class Node implements NodeInterface
 {
     /**
      * @var string
@@ -104,14 +105,8 @@ class Node implements NodeInterface, ArrayExchangeInterface
      */
     private $strategy = null;
 
-    /**
-     * @param string $type
-     * @return string
-     */
-    public function __construct($type)
+    public function __construct(string $type)
     {
-        $type = (string)$type;
-
         if (!$type) {
             throw new LogicException('The node type must not be empty');
         }
@@ -121,27 +116,17 @@ class Node implements NodeInterface, ArrayExchangeInterface
 
     /**
      * Sets the node's general state
-     *
-     * @param string $state
-     * @return self
      */
-    public function setState($state)
+    public function setState(string $state): void
     {
         $this->state = $state;
-        return $this;
     }
 
     /**
      * Update application states
-     *
-     * @param array|\Traversable $states
      */
-    public function updateApplicationStates($states)
+    public function updateApplicationStates(iterable $states): void
     {
-        if (!is_array($states) && !($states instanceof \Traversable)) {
-            return;
-        }
-
         foreach ($states as $appId => $state) {
             $this->applicationStates[$appId] = (string)$state;
         }
@@ -149,40 +134,31 @@ class Node implements NodeInterface, ArrayExchangeInterface
 
     /**
      * Set the application states
-     *
-     * @param array|\Traversable $states
      */
-    public function setApplicationStates($states)
+    public function setApplicationStates(iterable $states): void
     {
         $this->applicationStates = [];
         $this->updateApplicationStates($states);
     }
 
-    /**
-     * @param NodeStrategyInterface $provider
-     * @return \Rampage\Nexus\Entities\Node
-     */
-    public function setStrategyProvider(NodeStrategyProviderInterface $provider)
+    public function setStrategyProvider(NodeStrategyProviderInterface $provider): void
     {
         $this->strategyProvider = $provider;
-        return $this;
     }
 
     /**
      * Sets the node strategy
-     *
-     * @param NodeStrategyInterface $strategy
      */
-    public function setStrategy(NodeStrategyInterface $strategy)
+    public function setStrategy(NodeStrategyInterface $strategy): void
     {
         $strategy->setEntity($this);
         $this->strategy = $strategy;
     }
 
     /**
-     * @return \Rampage\Nexus\Deployment\NodeStrategyInterface
+     * @throws LogicException
      */
-    public function getStrategy()
+    public function getStrategy(): NodeStrategyInterface
     {
         if (!$this->strategy) {
             if (!$this->strategyProvider || !$this->strategyProvider->has($this->type)) {
@@ -195,66 +171,41 @@ class Node implements NodeInterface, ArrayExchangeInterface
         return $this->strategy;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return \Rampage\Nexus\Entities\string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param \Rampage\Nexus\Entities\string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
-        return $this;
     }
 
-    /**
-     * @param string $state
-     * @param array $applicationStates
-     */
-    public function updateState($state, $applicationStates = null)
+    public function updateState(string $state, iterable $applicationStates = null): void
     {
         $this->state = (string)$state;
-        $this->setApplicationStates($applicationStates);
-
-        return $this;
+        $this->setApplicationStates($applicationStates ?? []);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::isAttached()
-     */
-    public function isAttached()
+    public function isAttached(): bool
     {
         return ($this->deployTarget !== null);
     }
 
     /**
      * Returns the deploy target the node is attached to
-     *
-     * @return DeployTarget
      */
-    public function getDeployTarget()
+    public function getDeployTarget(): DeployTarget
     {
         return $this->deployTarget;
     }
 
-    /**
-     * @param DeployTarget $deployTarget
-     */
-    public function attach(DeployTarget $deployTarget)
+    public function attach(DeployTarget $deployTarget): void
     {
         if ($this->deployTarget) {
             throw new LogicException('This node is already attached to a deploy target');
@@ -262,22 +213,17 @@ class Node implements NodeInterface, ArrayExchangeInterface
 
         $this->deployTarget = $deployTarget;
         $this->getStrategy()->attach($deployTarget);
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
     /**
-     * @return ArrayConfig|mixed
+     * @return mixed The requested server info
      */
-    public function getServerInfo($key = null)
+    public function getServerInfo(string $key = null)
     {
         if ($key === null) {
             return $this->serverInfo;
@@ -288,7 +234,10 @@ class Node implements NodeInterface, ArrayExchangeInterface
 
             foreach ($this->serverInfo as $key => $value) {
                 $this->flatServerInfo[$key] = $value;
-                $this->flattenCollection($value, $key, $this->serverInfo);
+
+                if (is_iterable($value)) {
+                    $this->flattenCollection($value, $key, $this->serverInfo);
+                }
             }
         }
 
@@ -300,18 +249,10 @@ class Node implements NodeInterface, ArrayExchangeInterface
     }
 
     /**
-     * Flattens an array or traversable into the context array
-     *
-     * @param array|Traversable $values
-     * @param string $prefix
-     * @param array $context
+     * Flattens an iterable into the context array
      */
-    private function flattenCollection($values, $prefix, array &$context)
+    private function flattenCollection(iterable $values, string $prefix, array &$context): void
     {
-        if (!is_array($values) && !($values instanceof Traversable)) {
-            return;
-        }
-
         foreach ($values as $key => $value) {
             $flattenedKey = $prefix . '.' . $key;
             $context[$flattenedKey] = $value;
@@ -323,82 +264,46 @@ class Node implements NodeInterface, ArrayExchangeInterface
      * Sets the server info
      *
      * Nested array values will be flattened to dot-concatenated keys
-     * while the original array will sty in place
-     *
-     * @param array $serverInfo
-     * @return self
+     * while the original array will stay in place
      */
-    public function setServerInfo(array $serverInfo)
+    public function setServerInfo(array $serverInfo): void
     {
         $this->serverInfo = $serverInfo;
         $this->flatServerInfo = null;
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::acceptsClusterSibling()
-     */
-    public function acceptsClusterSibling(NodeInterface $node)
+    public function acceptsClusterSibling(NodeInterface $node): bool
     {
         return $this->getStrategy()->acceptsClusterSibling($node);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::detach()
-     */
-    public function detach()
+    public function detach(): void
     {
         $this->getStrategy()->detach();
         $this->deployTarget = null;
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::rebuild()
-     */
-    public function rebuild(ApplicationInstance $application = null)
+    public function rebuild(ApplicationInstance $application = null): void
     {
         $this->getStrategy()->rebuild($application);
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::refresh()
-     */
-    public function refresh()
+    public function refresh(): void
     {
         $this->getStrategy()->refresh();
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::sync()
-     */
-    public function sync()
+    public function sync(): void
     {
         $this->getStrategy()->sync();
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::getTypeId()
-     */
-    public function getTypeId()
+    public function getTypeId(): string
     {
         return $this->getStrategy()->getTypeId();
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::getApplicationState()
-     */
-    public function getApplicationState(ApplicationInstance $application)
+    public function getApplicationState(ApplicationInstance $application): string
     {
         if (!isset($this->applicationStates[$application->getId()])) {
             return ApplicationInstance::STATE_UNKNOWN;
@@ -407,79 +312,23 @@ class Node implements NodeInterface, ArrayExchangeInterface
         return $this->applicationStates[$application->getId()];
     }
 
-    /**
-     * @return string
-     */
-    public function getSecret()
+    public function getSecret(): string
     {
         return $this->secret;
     }
 
-    /**
-     * @return string
-     */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @param string $url
-     * @return self
-     */
-    public function setUrl($url)
+    public function setUrl(string $url): void
     {
         $this->url = $url;
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Deployment\NodeInterface::canSync()
-     */
-    public function canSync()
+    public function canSync(): bool
     {
         return $this->getStrategy()->canSync();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExchangeInterface::exchangeArray()
-     */
-    public function exchangeArray(array $array)
-    {
-        $params = new Parameters($array);
-
-        $this->name = $params->get('name', $this->name);
-        $this->url = $params->get('url', $this->url);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExportableInterface::toArray()
-     */
-    public function toArray()
-    {
-        $array = [
-            'id' => $this->id,
-            'name' => $this->name,
-            'url' => (string)$this->url,
-            'serverInfo' => $this->serverInfo,
-            'state' => $this->state,
-            'isAttached' => $this->isAttached(),
-        ];
-
-        if ($this->isAttached()) {
-            $array['deployTarget'] = $this->deployTarget->getId();
-            $array['applicationStates'] = [];
-
-            foreach ($this->deployTarget->getApplications() as $application) {
-                $array['applicationStates'][$application->getId()] = $this->getApplicationState($application);
-            }
-        }
-
-        return $array;
     }
 }

@@ -22,6 +22,8 @@
 
 namespace Rampage\Nexus\Package;
 
+use Rampage\Nexus\Package\Constraint\ConstraintInterface;
+
 /**
  * Implements a platform dependency
  */
@@ -42,36 +44,23 @@ class PlatformDependency implements DependencyInterface
      */
     protected $constraint = null;
 
-    /**
-     * @param string $name
-     * @param string $constraint
-     */
-    public function __construct($name, $constraint = '*')
+    public function __construct(string $name, string $constraint = '*')
     {
         $this->name = $name;
         $this->constraint = $constraint;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConstraint()
+    public function getConstraint(): ConstraintInterface
     {
         return (new Constraint\ConstraintBuilder())->createConstraint($this->constraint);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE_PLATFORM;
     }

@@ -29,11 +29,7 @@ use Zend\Filter\FilterInterface;
  */
 class PackageNameFilter implements FilterInterface
 {
-    /**
-     * {@inheritDoc}
-     * @see \Zend\Filter\FilterInterface::filter()
-     */
-    public function filter($value)
+    public function filter($value): string
     {
         $value = strtolower((string)$value);
         $value = strtr($value, [

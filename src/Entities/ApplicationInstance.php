@@ -38,7 +38,7 @@ use Rampage\Nexus\Exception\InvalidArgumentException;
  *
  * This entity is aggregated by the deploy target
  */
-class ApplicationInstance implements Api\ArrayExchangeInterface
+class ApplicationInstance
 {
     const STATE_DEPLOYED = 'deployed';
     const STATE_ERROR = 'error';
@@ -52,8 +52,6 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     const STATE_WORKING = 'working'; // Aggregated state
     const STATE_UNKNOWN = 'unknown';
 
-    use ArrayOrTraversableGuardTrait;
-
     /**
      * Internal application identifier
      *
@@ -66,7 +64,7 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
      *
      * @var string
      */
-    protected $label = null;
+    private $label = null;
 
     /**
      * The current application state
@@ -75,14 +73,14 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
      *
      * @var string
      */
-    protected $state = self::STATE_PENDING;
+    private $state = self::STATE_PENDING;
 
     /**
      * The application that is deployed with this instance
      *
      * @var Application
      */
-    protected $application = null;
+    private $application = null;
 
     /**
      * The currently deployed package
@@ -103,35 +101,35 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
      *
      * @var string
      */
-    protected $vhost = null;
+    private $vhost = null;
 
     /**
      * The target path within the vhost
      *
      * @var string
      */
-    protected $path = '/';
+    private $path = '/';
 
     /**
      * The application flavor used by the deploy strategy to optimize the created config
      *
      * @var string
      */
-    protected $flavor = null;
+    private $flavor = null;
 
     /**
      * User provided parameters
      *
      * @var array
      */
-    protected $userParameters = [];
+    private $userParameters = [];
 
     /**
      * Pervious user parameters
      *
      * @var array
      */
-    protected $previousUserParameters = null;
+    private $previousUserParameters = null;
 
     /**
      * @var bool
@@ -139,13 +137,14 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     private $isRemoved = false;
 
     /**
-     * Construct
-     *
-     * @param   string  $id     The instance identifier
-     * @param   string  $path   The location path within the vhost
+     * @throws InvalidArgumentException
      */
-    public function __construct(Application $application, $id, VHost $vhost = null, $path = null)
-    {
+    public function __construct(
+        Application $application,
+        string $id,
+        VHost $vhost = null,
+        string $path = null
+    ) {
         if (!preg_match('~^[a-z0-9-_]+$~i', $id)) {
             throw new InvalidArgumentException('Bad application instance identifier: ' . $id);
         }
@@ -166,64 +165,44 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
 
     /**
      * Returns the application identifier
-     *
-     * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
     /**
-     * Returns the VHost ID for this applciation
-     *
-     * @return string|null
+     * Returns the VHost ID for this application
      */
-    public function getVHost()
+    public function getVHost(): string
     {
         return $this->vhost;
     }
 
-    /**
-     * @return string
-     */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     * @return self
-     */
-    public function setState($state)
+    public function setState(string $state): void
     {
-        $this->state = (string)$state;
-        return $this;
+        $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * Returns the application this instance references
-     *
-     * @return \Rampage\Nexus\Entities\Application
      */
-    public function getApplication()
+    public function getApplication(): Application
     {
         if (!$this->application) {
             throw new LogicException('Missing application instance');
@@ -235,16 +214,12 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     /**
      * @return PackageInterface
      */
-    public function getPackage()
+    public function getPackage(): PackageInterface
     {
         return $this->package;
     }
 
-    /**
-     * @param PackageInterface $package
-     * @return self
-     */
-    public function setPackage(PackageInterface $package)
+    public function setPackage(PackageInterface $package): void
     {
         if (!$this->application->hasPackage($package)) {
             throw new LogicException(sprintf('Package %s does not provide application %s', $this->package->getId(), $this->application->getName()));
@@ -253,75 +228,45 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
         $this->previousPackage = $this->package;
         $this->previousUserParameters = $this->userParameters;
         $this->package = $package;
-
-        return $this;
     }
 
-    /**
-     * @return ApplicationPackage
-     */
-    public function getPreviousPackage()
+    public function getPreviousPackage(): PackageInterface
     {
         return $this->previousPackage;
     }
 
-    /**
-     * @return string
-     */
-    public function getFlavor()
+    public function getFlavor(): string
     {
         return $this->flavor;
     }
 
-    /**
-     * @param string $flavor
-     */
-    public function setFlavor($flavor)
+    public function setFlavor(string $flavor): void
     {
         $this->flavor = ($flavor !== null)? (string)$flavor : null;
-        return $this;
     }
 
-    /**
-     * @return array|\Traversable
-     */
-    public function getUserParameters()
+    public function getUserParameters(): iterable
     {
         return $this->userParameters;
     }
 
-    /**
-     * @param array|\Traversable $parameters
-     * @return self
-     */
-    public function setUserParameters($parameters)
+    public function setUserParameters(iterable $parameters): void
     {
-        $this->guardForArrayOrTraversable($parameters, 'user parameters');
         $this->userParameters = $parameters;
-
-        return $this;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getPreviousParameters()
+    public function getPreviousParameters(): iterable
     {
         return $this->previousParameters;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRemoved()
+    public function isRemoved(): bool
     {
         return $this->isRemoved;
     }
 
     /**
      * Perform application removal
-     *
-     * @return self
      */
     public function remove()
     {
@@ -331,12 +276,11 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
     }
 
     /**
-     * Rollback to the previouis instance state
+     * Rollback to the previous instance state
      *
      * @throws LogicException
-     * @return self
      */
-    public function rollback()
+    public function rollback(): void
     {
         if (!$this->previousPackage) {
             throw new LogicException('Cannot roll back without previous package');
@@ -346,70 +290,10 @@ class ApplicationInstance implements Api\ArrayExchangeInterface
         $this->userParameters = $this->previousUserParameters? : [];
         $this->previousPackage = null;
         $this->previousUserParameters = null;
-
-        return $this;
     }
 
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
-        $this->label = (string)$label;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExchangeInterface::exchangeArray()
-     */
-    public function exchangeArray(array $array)
-    {
-        $data = new Parameters($array);
-        $packageId = $data->get('package');
-
-        $this->label = $data->get('label');
-        $this->flavor = $data->get('flavor');
-
-        if ($packageId) {
-            $package = $this->application->findPackage($packageId);
-
-            if (!$packageId) {
-                throw new UnexpectedValueException(sprintf(
-                    'The package id %s does not exist for Application %s',
-                    $packageId,
-                    $this->application->getId()
-                ));
-            }
-
-            $this->setPackage($package);
-        }
-
-        $this->setUserParameters($data->get('userParameters'));
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExportableInterface::toArray()
-     */
-    public function toArray()
-    {
-        return [
-            'id' => $this->id,
-            'label' => $this->label,
-            'application' => [
-                'id' => $this->getApplication()->getId(),
-                'label' => $this->getApplication()->getLabel(),
-                'package' => $this->package? $this->package->toArray() : null,
-                'previousPackage' => $this->previousPackage? $this->previousPackage->toArray() : null,
-            ],
-            'flavor' => $this->flavor,
-            'path' => $this->path,
-            'state' => $this->state,
-            'userParameters' => $this->userParameters,
-            'vhost' => $this->vhost
-        ];
+        $this->label = $label;
     }
 }

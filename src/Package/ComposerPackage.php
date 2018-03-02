@@ -94,7 +94,7 @@ class ComposerPackage implements PackageInterface
     /**
      * @throws UnexpectedValueException
      */
-    protected function validate()
+    private function validate(): void
     {
         $requiredFields = ['name', 'version'];
 
@@ -113,7 +113,7 @@ class ComposerPackage implements PackageInterface
      * {@inheritDoc}
      * @see \Rampage\Nexus\Package\PackageInterface::getArchive()
      */
-    public function getArchive()
+    public function getArchive(): string
     {
         return $this->archive;
     }
@@ -122,7 +122,7 @@ class ComposerPackage implements PackageInterface
      * {@inheritDoc}
      * @see \Rampage\Nexus\Package\PackageInterface::getId()
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->getName() . '@' . $this->getVersion();
     }
@@ -131,29 +131,24 @@ class ComposerPackage implements PackageInterface
      * Sets the archive file
      *
      * @param string $archive
-     * @return self
      */
-    public function setArchive($archive)
+    public function setArchive(?string $archive): void
     {
         $this->archive = $archive? : null;
-        return $this;
     }
 
     /**
      * Returns the configured document root
-     *
-     * @return string
      */
-    public function getDocumentRoot()
+    public function getDocumentRoot(): string
     {
         return $this->data->get('docroot');
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getExtra()
+     * @return mixed Returns the requested extra data
      */
-    public function getExtra($name = null)
+    public function getExtra(string $name = null)
     {
         $extra = $this->composer->get('extra', []);
         unset($extra['deployment']);
@@ -163,18 +158,13 @@ class ComposerPackage implements PackageInterface
 
     /**
      * Returns the package name
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->nameFilter->filter($this->composer->get('name'));
     }
 
-    /**
-     * @return self
-     */
-    protected function buildParameters()
+    private function buildParameters(): void
     {
         $this->parameters = [];
 
@@ -200,10 +190,7 @@ class ComposerPackage implements PackageInterface
         }
     }
 
-    /**
-     * @see \rampage\nexus\PackageInterface::getParameters()
-     */
-    public function getParameters()
+    public function getParameters(): array
     {
         if ($this->parameters === null) {
             $this->buildParameters();
@@ -212,31 +199,17 @@ class ComposerPackage implements PackageInterface
         return $this->parameters;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getVariables()
-     */
-    public function getVariables()
+    public function getVariables(): array
     {
-        if (isset($this->data['variables']) && is_array($this->data['variables'])) {
-            return $this->data['variables'];
-        }
-
-        return [];
+        return $this->data['variables'] ?? [];
     }
 
-    /**
-     * @see \rampage\nexus\PackageInterface::getType()
-     */
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE_COMPOSER;
     }
 
-    /**
-     * @see \rampage\nexus\PackageInterface::getVersion()
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         $version = $this->composer->get('version');
 

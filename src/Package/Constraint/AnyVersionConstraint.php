@@ -31,7 +31,7 @@ class AnyVersionConstraint implements ConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function match($version)
+    public function match(string $version): bool
     {
         return true;
     }

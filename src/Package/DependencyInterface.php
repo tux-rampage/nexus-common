@@ -27,18 +27,9 @@ namespace Rampage\Nexus\Package;
  */
 interface DependencyInterface
 {
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @return name
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return Constraint\ConstraintInterface
-     */
-    public function getConstraint();
+    public function getConstraint(): Constraint\ConstraintInterface;
 }

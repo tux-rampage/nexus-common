@@ -36,7 +36,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * It may never contain packages of other applications and it might not exist without at least one
  * Package instance
  */
-class Application implements Api\ArrayExchangeInterface
+class Application
 {
     /**
      * The identifier
@@ -54,56 +54,41 @@ class Application implements Api\ArrayExchangeInterface
      *
      * @var string
      */
-    protected $label = null;
+    private $label = null;
 
     /**
      * Represents the icon as binary data
      *
      * @var StreamInterface
      */
-    protected $icon = null;
+    private $icon = null;
 
     /**
      * @var ApplicationPackage[]|ArrayCollection
      */
-    protected $packages = [];
+    private $packages = [];
 
     /**
      * Construct
      */
-    public function __construct($id)
+    public function __construct(string $id)
     {
-        $this->id = (string)$id;
+        $this->id = $id;
         $this->packages = new ArrayCollection();
     }
 
     /**
      * Returns the unique identifier of this application
-     *
-     * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
      * Returns the application label
-     *
-     * @return string
      */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * Returns the application name
-     * @deprecated 0.9.0
-     * @see getLabel() Use `getLabel()` instead
-     * @return string
-     */
-    public function getName()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -111,36 +96,28 @@ class Application implements Api\ArrayExchangeInterface
     /**
      * @return StreamInterface
      */
-    public function getIcon()
+    public function getIcon(): ?StreamInterface
     {
         return $this->icon;
     }
 
-    /**
-     * @param StreamInterface $icon
-     * @return self
-     */
-    public function setIcon(StreamInterface $icon)
+    public function setIcon(StreamInterface $icon): void
     {
         $this->icon = $icon;
-        return $this;
     }
 
     /**
      * @return ApplicationPackage[]
      */
-    public function getPackages()
+    public function getPackages(): iterable
     {
         return $this->packages;
     }
 
     /**
      * Find a package by id
-     *
-     * @param string $packageId
-     * @return PackageInterface
      */
-    public function findPackage($packageId)
+    public function findPackage($packageId): ?PackageInterface
     {
         $filter = function(PackageInterface $item) use ($packageId) {
             return ($item->getId() == $packageId);
@@ -151,53 +128,11 @@ class Application implements Api\ArrayExchangeInterface
 
     /**
      * Check if this application has the requested package
-     *
-     * @param PackageInterface $package
-     * @return bool
      */
-    public function hasPackage(PackageInterface $package)
+    public function hasPackage(PackageInterface $package): bool
     {
         return $this->packages->exists(function(PackageInterface $item) use ($package) {
             return ($item->getId() == $package->getId());
         });
-    }
-
-    /**
-     * Exchange entity data with the given array
-     *
-     * @param array $array
-     * @return self
-     */
-    public function exchangeArray(array $array)
-    {
-        $params = new Parameters($array);
-        $this->label = $params->get('label', $this->label);
-
-        return $this;
-    }
-
-    /**
-     * Returns the array representation
-     *
-     * @return array
-     */
-    public function toArray($withPackages = true)
-    {
-        $array = [
-            'id' => $this->id,
-            'label' => $this->label,
-        ];
-
-        if (!$withPackages) {
-            return $array;
-        }
-
-        $array['packages'] = [];
-
-        foreach ($this->packages as $package) {
-            $array['packages'][] = $package->getId();
-        }
-
-        return $array;
     }
 }

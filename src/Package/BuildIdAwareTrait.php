@@ -38,12 +38,8 @@ trait BuildIdAwareTrait
      * Sets the build identifier
      *
      * The provided build ID must follow semantic versioning
-     * according to semantic versioning
-     *
-     * @param string $buildId
-     * @return self
      */
-    public function setBuildId($buildId)
+    public function setBuildId(string $buildId): void
     {
         if ($buildId == '') {
             $buildId = null;
@@ -52,6 +48,5 @@ trait BuildIdAwareTrait
         }
 
         $this->buildId = $buildId;
-        return $this;
     }
 }

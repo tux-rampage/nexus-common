@@ -34,57 +34,47 @@ interface PackageInterface extends ArrayExportableInterface
      *
      * Returns the id to uniquely identify this package.
      * This might be a combination of package name and version or a build identifier.
-     *
-     * @return string
      */
-    public function getId();
+    public function getId(): string;
 
     /**
-     * @return string
+     * The package name
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Returns the path or URI to the archive file
-     *
-     * @return string
      */
-    public function getArchive();
+    public function getArchive(): string;
 
     /**
      * Returns the package version number
-     *
-     * @return string
      */
-    public function getVersion();
+    public function getVersion(): string;
 
     /**
      * Returns the package type
-     *
-     * @return string
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Returns the relative path to the document root
-     *
-     * @return string
      */
-    public function getDocumentRoot();
+    public function getDocumentRoot(): string ;
 
     /**
      * Returns defined package parameters
      *
-     * @return ParameterInterface[]
+     * @return iterable|ParameterInterface[]
      */
-    public function getParameters();
+    public function getParameters(): iterable;
 
     /**
      * A variables hash
      *
-     * @return string[string]
+     * @return string[]
      */
-    public function getVariables();
+    public function getVariables(): array;
 
     /**
      * Returns extra package information
@@ -92,12 +82,10 @@ interface PackageInterface extends ArrayExportableInterface
      * @param   string          $name   The property name. Omit to return all extra options
      * @return  array|string
      */
-    public function getExtra($name = null);
+    public function getExtra(string $name = null);
 
     /**
-     * Returns whethter the package is stable or not
-     *
-     * @return bool
+     * Returns whether the package is stable or not
      */
-    public function isStable();
+    public function isStable(): bool;
 }

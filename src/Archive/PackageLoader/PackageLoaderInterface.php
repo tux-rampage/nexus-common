@@ -32,17 +32,11 @@ interface PackageLoaderInterface
 {
     /**
      * Checks if this reader can read from the given archive
-     *
-     * @param   PharData $archive
-     * @return  bool
      */
-    public function canReadFromArchive(PharData $archive);
+    public function canReadFromArchive(PharData $archive): bool;
 
     /**
      * Reads the package from the given archive
-     *
-     * @param   PharData            $archive    The archive to read from
-     * @return  PackageInterface                The resulting package
      */
-    public function load(PharData $archive);
+    public function load(PharData $archive): PackageInterface;
 }

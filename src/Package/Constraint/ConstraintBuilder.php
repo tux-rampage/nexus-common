@@ -28,14 +28,11 @@ namespace Rampage\Nexus\Package\Constraint;
 class ConstraintBuilder
 {
     /**
-     * Builds a constraint from a string value
-     *
-     * @param   string              $string The constraint string
-     * @return  ConstraintInterface         The resulting constraint instance
+     * Builds a constraint from a string expression
      */
-    public function createConstraint($string)
+    public function createConstraint(string $expression): ConstraintInterface
     {
-        // TODO: Implement cversion constraint builder
+        // TODO: Implement constraint builder
         return new AnyVersionConstraint();
     }
 }

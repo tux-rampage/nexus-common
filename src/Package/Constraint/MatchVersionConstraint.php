@@ -41,7 +41,7 @@ class MatchVersionConstraint implements ConstraintInterface
      * @param string $version
      * @param string $operator
      */
-    public function __construct($version, $operator)
+    public function __construct(string $version, string $operator)
     {
         $this->version = $version;
         $this->operator = $operator;
@@ -50,7 +50,7 @@ class MatchVersionConstraint implements ConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function match($version)
+    public function match(string $version): bool
     {
         return version_compare($version, $this->version, $this->operator);
     }

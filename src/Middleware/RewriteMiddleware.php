@@ -22,17 +22,14 @@
 
 namespace Rampage\Nexus\Middleware;
 
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Stratigility\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
 
 class RewriteMiddleware implements MiddlewareInterface
 {
-    /**
-     * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $uri = $request->getUri();
         $path = $uri->getPath();
@@ -43,6 +40,6 @@ class RewriteMiddleware implements MiddlewareInterface
             $request = $request->withUri($uri);
         }
 
-        return $out($request, $response);
+        return $handler->handle($request);
     }
 }

@@ -50,42 +50,42 @@ class DeployTarget
      *
      * @var string
      */
-    protected $name = null;
+    private $name = null;
 
     /**
      * Collection of VHosts
      *
      * @var VHost[]|ArrayCollection
      */
-    protected $vhosts;
+    private $vhosts;
 
     /**
      * Collection of attached deployment nodes
      *
      * @var NodeInterface[]|ArrayCollection
      */
-    protected $nodes;
+    private $nodes;
 
     /**
      * Collection of applications for this target
      *
      * @var ApplicationInstance[]|ArrayCollection
      */
-    protected $applications;
+    private $applications;
 
     /**
      * The aggregated state for this target
      *
      * @var string
      */
-    protected $state = self::STATE_PENDING;
+    private $state = self::STATE_PENDING;
 
     /**
      * Maps the application status levels
      *
      * @var int[]
      */
-    protected $statusAggregationLevels = [
+    private $statusAggregationLevels = [
         ApplicationInstance::STATE_PENDING => 1,
         ApplicationInstance::STATE_REMOVED => 2,
         ApplicationInstance::STATE_INACTIVE => 4,
@@ -99,7 +99,7 @@ class DeployTarget
      *
      * @var string[]
      */
-    protected $workingStates = [
+    private $workingStates = [
         ApplicationInstance::STATE_ACTIVATING,
         ApplicationInstance::STATE_DEACTIVATING,
         ApplicationInstance::STATE_REMOVING,
@@ -119,7 +119,7 @@ class DeployTarget
     /**
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -127,7 +127,7 @@ class DeployTarget
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -136,32 +136,24 @@ class DeployTarget
      * @param string $name
      * @return self
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string)$name;
-        return $this;
+        $this->name = $name;
     }
 
     /**
-     * @param VHost $host
      * @throws LogicException
-     * @return self
      */
-    public function addVHost(VHost $host)
+    public function addVHost(VHost $host): void
     {
         if ($this->hasVHostName($host->getName())) {
             throw new LogicException('Duplicate vhost name');
         }
 
         $this->vhosts[$host->getId()] = $host;
-        return $this;
     }
 
-    /**
-     * @param string|null $id
-     * @return \Rampage\Nexus\Entities\VHost
-     */
-    public function getVHost($id)
+    public function getVHost($id): ?VHost
     {
         if ($id && isset($this->vhosts[$id])) {
             return $this->vhosts[$id];
@@ -172,11 +164,8 @@ class DeployTarget
 
     /**
      * Check if there is a vhost with the given name
-     *
-     * @param string $name
-     * @return boolean
      */
-    public function hasVHostName($name)
+    public function hasVHostName(string $name): bool
     {
         return $this->vhosts->exists(function(VHost $item) use ($name) {
             return ($item->getName() == $name);
@@ -184,45 +173,35 @@ class DeployTarget
     }
 
     /**
-     * @return \Rampage\Nexus\Entities\VHost[]
+     * @return VHost[]
      */
-    public function getVHosts()
+    public function getVHosts(): iterable
     {
         return $this->vhosts->toArray();
     }
 
     /**
-     * @param VHost $host
      * @throws LogicException
-     * @return \Rampage\Nexus\Entities\DeployTarget
      */
-    public function removeVHost(VHost $host)
+    public function removeVHost(VHost $host): void
     {
         unset($this->vhosts[$host->getId()]);
-        return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function canManageVHosts()
+    public function canManageVHosts(): bool
     {
-        // TODO: Implement actual check for managable vhost configs
         return true;
     }
 
     /**
-     * @return \Rampage\Nexus\Entities\Node[]
+     * @return Node[]
      */
-    public function getNodes()
+    public function getNodes(): iterable
     {
         return $this->nodes;
     }
 
-    /**
-     * @param string $state
-     */
-    protected function mapState($state)
+    private function mapState(string $state): string
     {
         if (isset($this->workingStates[$state])) {
             return self::STATE_WORKING;
@@ -231,13 +210,7 @@ class DeployTarget
         return $state;
     }
 
-    /**
-     * Maps the state aggregation level
-     *
-     * @param string $state
-     * @return int
-     */
-    protected function mapStateAggregationLevel($state)
+    private function mapStateAggregationLevel(string $state): int
     {
         if (isset($this->statusAggregationLevels[$state])) {
             return $this->statusAggregationLevels[$state];
@@ -249,7 +222,7 @@ class DeployTarget
     /**
      * Refresh the status
      */
-    public function refreshStatus()
+    public function refreshStatus(): void
     {
         foreach ($this->nodes as $node) {
             $node->refresh();
@@ -261,7 +234,7 @@ class DeployTarget
     /**
      * Updates all application states from nodes
      */
-    public function updateApplicationStates()
+    public function updateApplicationStates(): void
     {
         foreach ($this->applications as $application) {
             $this->updateApplicationState($application);
@@ -275,7 +248,7 @@ class DeployTarget
      *
      * @return string
      */
-    public function aggregateState()
+    public function aggregateState(): string
     {
         $this->state = self::STATE_PENDING;
 
@@ -296,20 +269,9 @@ class DeployTarget
 
     /**
      * Update the state of a single application
-     *
-     * @param string|ApplicationInstance $application
-     * @return self
      */
-    public function updateApplicationState($application)
+    public function updateApplicationState(ApplicationInstance $application): void
     {
-        if (!$application instanceof ApplicationInstance) {
-            $application = $this->findApplication($application);
-
-            if (!$application) {
-                return $this;
-            }
-        }
-
         $state = ApplicationInstance::STATE_UNKNOWN;
         $level = 0;
 
@@ -330,24 +292,15 @@ class DeployTarget
             $key = (string)$application->getId();
             unset($this->applications[$key]);
         }
-
-        return $this;
     }
 
-    /**
-     * @param ApplicationInstance $application
-     */
-    public function addApplication(ApplicationInstance $application)
+    public function addApplication(ApplicationInstance $application): void
     {
         $id = (string)$application->getId();
         $this->applications[$id] = $application;
     }
 
-    /**
-     * @param unknown $id
-     * @return NULL|\Rampage\Nexus\Entities\ApplicationInstance
-     */
-    public function findApplicationInstance($id)
+    public function findApplicationInstance(string $id): ?ApplicationInstance
     {
         $predicate = function(ApplicationInstance $item) use ($id) {
             return ($item->getId() == $id);
@@ -357,10 +310,9 @@ class DeployTarget
     }
 
     /**
-     * @param Application $application
      * @return ApplicationInstance[]
      */
-    public function findInstanceByApplication(Application $application)
+    public function findInstanceByApplication(Application $application): iterable
     {
         $predicate = function(ApplicationInstance $instance) use ($application) {
             return ($instance->getApplication()->getId() == $application->getId());
@@ -370,49 +322,33 @@ class DeployTarget
     }
 
     /**
-     * @return \Rampage\Nexus\Entities\ApplicationInstance[]
+     * @return ApplicationInstance[]
      */
-    public function getApplications()
+    public function getApplications(): iterable
     {
         return $this->applications->toArray();
     }
 
-    /**
-     * @param ApplicationInstance $instance
-     * @return \Rampage\Nexus\Entities\DeployTarget
-     */
-    public function removeApplication(ApplicationInstance $instance)
+    public function removeApplication(ApplicationInstance $instance): void
     {
         $instance->remove();
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     * @return self
-     */
-    public function setState($state)
+    public function setState(string $state): void
     {
         if (!in_array($state, [self::STATE_ERROR, self::STATE_PENDING, self::STATE_WORKING])) {
             throw new InvalidArgumentException('Invalid deploy target state: ' . $state);
         }
 
         $this->state = $state;
-        return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function canSync()
+    public function canSync(): bool
     {
         foreach ($this->nodes as $node) {
             if ($node->canSync()) {
@@ -426,7 +362,7 @@ class DeployTarget
     /**
      * @throws LogicException
      */
-    public function sync()
+    public function sync(): void
     {
         if (!$this->canSync()) {
             throw new LogicException('Target is not syncable');
@@ -437,45 +373,5 @@ class DeployTarget
                 $node->sync();
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExchangeInterface::exchangeArray()
-     */
-    public function exchangeArray(array $array)
-    {
-        $data = new Parameters($array);
-        $this->name = $data->get('name');
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExportableInterface::toArray()
-     */
-    public function toArray()
-    {
-        $array = [
-            'id' => $this->id,
-            'name' => $this->name,
-            'canManageVHosts' => $this->canManageVHosts(),
-            'vhosts' => [],
-            'nodes' => [],
-            'applications' => [],
-        ];
-
-        foreach ($this->vhosts as $vhost) {
-            $array['vhosts'][] = $vhost->toArray();
-        }
-
-        foreach ($this->nodes as $node) {
-            $array['nodes'][] = $node->toArray();
-        }
-
-        foreach ($this->applications as $application) {
-            $array['applications'][] = $application->toArray();
-        }
-
-        return $array;
     }
 }

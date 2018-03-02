@@ -9,6 +9,7 @@ namespace Rampage\Nexus\Archive;
 
 use Rampage\Nexus\Exception\RuntimeException;
 
+use Rampage\Nexus\Package\PackageInterface;
 use SplFileInfo;
 use PharData;
 
@@ -47,5 +48,5 @@ interface ArchiveLoaderInterface
      * @return  PackageInterface                The resulting package
      * @throws  RuntimeException                When the packagetype is not available
      */
-    public function getPackage(PharData $archive);
+    public function getPackage(PharData $archive): PackageInterface;
 }

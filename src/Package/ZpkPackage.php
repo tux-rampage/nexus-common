@@ -85,7 +85,7 @@ class ZpkPackage implements PackageInterface
     /**
      * @throws RuntimeException
      */
-    protected function validate()
+    private function validate()
     {
         $dom = new \DOMDocument();
         $dom->loadXML($this->descriptor->asXML());
@@ -95,46 +95,30 @@ class ZpkPackage implements PackageInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getId()
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->getName() . '@' . $this->getVersion();
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getArchive()
-     */
-    public function getArchive()
+    public function getArchive(): string
     {
         return $this->archive;
     }
 
-    /**
-     * @param string $archive
-     * @return self
-     */
-    public function setArchive($archive)
+    public function setArchive(string $archive): null
     {
         $this->archive = $archive;
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDocumentRoot()
+    public function getDocumentRoot(): string
     {
         return (string)$this->descriptor->docroot;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtra($name = null)
+    public function getExtra(string $name = null)
     {
         $extra = [
             self::EXTRA_APP_DIR => $this->getAppDir(),
@@ -148,10 +132,7 @@ class ZpkPackage implements PackageInterface
         return $extra;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->nameFilter->filter($this->descriptor->name);
     }
@@ -159,7 +140,7 @@ class ZpkPackage implements PackageInterface
     /**
      * Build package parameters
      */
-    protected function buildParameters()
+    private function buildParameters()
     {
         $boolFilter = new BoolFilter(BoolFilter::TYPE_ALL);
         $this->parameters = [];
@@ -205,10 +186,7 @@ class ZpkPackage implements PackageInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
+    public function getParameters(): iterable
     {
         if ($this->parameters === null) {
             $this->buildParameters();
@@ -217,11 +195,7 @@ class ZpkPackage implements PackageInterface
         return $this->parameters;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getVariables()
-     */
-    public function getVariables()
+    public function getVariables(): array
     {
         if ($this->variables === null) {
             $this->variables = [];
@@ -244,18 +218,12 @@ class ZpkPackage implements PackageInterface
         return $this->variables;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE_ZPK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         $version = (string)$this->descriptor->version->release;
 
@@ -266,18 +234,12 @@ class ZpkPackage implements PackageInterface
         return $version;
     }
 
-    /**
-     * @return string
-     */
-    public function getAppDir()
+    public function getAppDir(): string
     {
         return (string)$this->descriptor->appdir;
     }
 
-    /**
-     * @return string
-     */
-    public function getScriptsDir()
+    public function getScriptsDir(): string
     {
         return (string)$this->descriptor->scriptsdir;
     }

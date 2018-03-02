@@ -22,10 +22,10 @@
 
 namespace Rampage\Nexus\Middleware;
 
-use Zend\Stratigility\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Rampage\Nexus\StringStream;
 use Rampage\Nexus\NullStream;
 
 /**
@@ -45,34 +45,29 @@ class WebserverSendfileMiddleware implements MiddlewareInterface
     protected $mapping = [];
 
     /**
-     * @param array $mapping
+     * @param iterable|string[] $mapping
      */
-    public function __construct(array $mapping = [])
+    public function __construct(iterable $mapping = [])
     {
         foreach ($mapping as $from => $to) {
             $this->mapPathPrefix($from, $to);
         }
     }
 
-    /**
-     * @param string $fromPathPrefix
-     * @param string $toPathPrefix
-     */
-    public function mapPathPrefix($fromPathPrefix, $toPathPrefix)
+    public function mapPathPrefix(string $fromPathPrefix, string $toPathPrefix): void
     {
         $this->mapping[$fromPathPrefix] = $toPathPrefix;
     }
 
     /**
      * Create a sendfile response that deligates to the webserver
-     *
-     * @param ResponseInterface $response
-     * @param string $streamUrl
-     * @param string $fromPath
-     * @param string $toPath
-     * @return ResponseInterface
      */
-    private function sendFile($response, $streamUrl, $fromPath, $toPath)
+    private function sendFile(
+        ResponseInterface $response,
+        string $streamUrl,
+        string $fromPath,
+        string $toPath
+    ): ResponseInterface
     {
         $location = $toPath . substr($streamUrl, strlen($fromPath));
 
@@ -80,17 +75,9 @@ class WebserverSendfileMiddleware implements MiddlewareInterface
                         ->withHeader('X-Accel-Redirect', $location);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $result = $out();
-
-        if ($result instanceof ResponseInterface) {
-            $response = $result;
-        }
+        $response = $handler->handle($request);
 
         if ($response->getStatusCode() != 200) {
             return $response;

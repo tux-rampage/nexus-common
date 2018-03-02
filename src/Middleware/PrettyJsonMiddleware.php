@@ -22,10 +22,11 @@
 
 namespace Rampage\Nexus\Middleware;
 
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Zend\Diactoros\Response\JsonResponse;
+use Zend\Stdlib\ResponseInterface;
 
 
 /**
@@ -37,18 +38,14 @@ class PrettyJsonMiddleware implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @return boolean
      */
-    private function isPrettyRequested(ServerRequestInterface $request)
+    private function isPrettyRequested(ServerRequestInterface $request): bool
     {
         return array_key_exists('pretty', $request->getQueryParams());
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Zend\Stratigility\MiddlewareInterface::__invoke()
-     */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $delegate): ResponseInterface
     {
-        $response = $delegate->process($request);
+        $response = $delegate->handle($request);
 
         if (($response instanceof JsonResponse) && $this->isPrettyRequested($request)) {
             $response = $response->withEncodingOptions(JsonResponse::DEFAULT_JSON_FLAGS | JSON_PRETTY_PRINT);

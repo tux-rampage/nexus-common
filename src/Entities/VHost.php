@@ -1,27 +1,11 @@
 <?php
 /**
- * Copyright (c) 2015 Axel Helmert
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author    Axel Helmert
- * @copyright Copyright (c) 2015 Axel Helmert
- * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
+ * @author      Axel Helmert <tuxrampage>
+ * @license     LGPL https://www.gnu.org/licenses/lgpl.txt
+ * @copyright   (c) 2018 Axel Helmert
  */
 
 namespace Rampage\Nexus\Entities;
-
 
 use Zend\Stdlib\Parameters;
 use Rampage\Nexus\Exception\UnexpectedValueException;
@@ -29,7 +13,7 @@ use Rampage\Nexus\Exception\UnexpectedValueException;
 /**
  * Vhost definition
  */
-class VHost implements Api\ArrayExchangeInterface
+class VHost
 {
     /**
      * The name for the default vhost
@@ -81,42 +65,30 @@ class VHost implements Api\ArrayExchangeInterface
     /**
      * @param string $name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->id = sha1(uniqid('VHOST.', true));
         $this->setName($name);
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
      * Checks if this is the default vhost
-     *
-     * @return boolean
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return ($this->name == self::DEFAULT_VHOST);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return self
-     */
     public function setName($name)
     {
         if ($name == '') {

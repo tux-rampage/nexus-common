@@ -27,10 +27,5 @@ namespace Rampage\Nexus\Package\Constraint;
  */
 interface ConstraintInterface
 {
-    /**
-     * @param string $name
-     * @param string $version
-     * @return bool
-     */
-    public function match($version);
+    public function match(string $version): bool;
 }

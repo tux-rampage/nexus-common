@@ -42,11 +42,7 @@ trait BootstrapTrait
      */
     private $container;
 
-    /**
-     * @param ConfigProviderInterface $configProvider
-     * @return ContainerInterface
-     */
-    private function createContainer(ConfigProviderInterface $configProvider)
+    private function createContainer(ConfigProviderInterface $configProvider): ContainerInterface
     {
         $config = $configProvider->getConfig();
         $container = new ServiceManager();
@@ -62,26 +58,18 @@ trait BootstrapTrait
 
     /**
      * Returns the IoC Container
-     *
-     * @return ContainerInterface
      */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->container;
     }
 
-    /**
-     * @return HttpApplication
-     */
-    public function getHttpApp()
+    public function getHttpApp(): HttpApplication
     {
         return $this->container->get(HttpApplication::class);
     }
 
-    /**
-     * @return ConsoleApplication
-     */
-    public function getConsoleApp()
+    public function getConsoleApp(): ConsoleApplication
     {
         return $this->container->get(ConsoleApplication::class);
     }

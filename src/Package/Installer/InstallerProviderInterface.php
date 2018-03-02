@@ -31,16 +31,13 @@ interface InstallerProviderInterface
 {
     /**
      * Resolves the installer for the given package
-     *
-     * @param PackageInterface $package
-     * @return InstallerInterface
      */
-    public function getInstaller(PackageInterface $package);
+    public function getInstaller(PackageInterface $package): InstallerInterface;
 
     /**
      * Returns all package types for which installers are available
      *
      * @return string[]
      */
-    public function getSupportedPackageTypes();
+    public function getSupportedPackageTypes(): array;
 }

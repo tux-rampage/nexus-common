@@ -34,39 +34,29 @@ interface InstallerInterface
 {
     /**
      * Set the package to operate on
-     *
-     * @param PackageInterface $package
      */
-    public function setPackage(PackageInterface $package);
+    public function setPackage(PackageInterface $package): void;
 
     /**
      * Set the target directory to install to
-     *
-     * @param SplFileInfo $dir
      */
-    public function setTargetDirectory(SplFileInfo $dir);
+    public function setTargetDirectory(SplFileInfo $dir): void;
 
     /**
      * Returns the relative web root path.
      *
-     * If the return value is NULL or empty, the deploy strategy may assume that the application directory is the web root.
-     *
-     * @param   array       $params The user params
-     * @return  string|null
+     * If the return value is NULL or empty, the deploy strategy may assume that the application directory is the
+     * web root.
      */
-    public function getWebRoot($params);
+    public function getWebRoot(array $params): ?string;
 
     /**
      * Install the current application package
-     *
-     * @param   array   $params The user params
      */
-    public function install($params);
+    public function install(array $params): void;
 
     /**
      * Remove the current application package
-     *
-     * @param   array   $params The user params
      */
-    public function remove($params);
+    public function remove(array $params): void;
 }

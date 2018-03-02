@@ -31,43 +31,33 @@ interface ParameterInterface
      * The parameter name
      *
      * This name is a valid variable name an can be passed as environment varaible.
-     *
-     * @return  string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * The parameter type
      *
      * This can be used to build the proper form input
-     *
-     * @return string
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * The default value for this parameter
-     *
-     * @return string
      */
-    public function getDefault();
+    public function getDefault(): ?string;
 
     /**
      * The human readable label of this parameter
-     *
-     * @return string
      */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * Check if allowed options are defined
      *
      * If so the implementation should check if the user provided value
      * matches on of the keys in the array returned by `getOptions()`
-     *
-     * @return  bool
      */
-    public function hasValueOptions();
+    public function hasValueOptions(): bool;
 
     /**
      * Allowed values
@@ -77,21 +67,19 @@ interface ParameterInterface
      *
      * This can be used to build select options for example.
      *
-     * @return array
+     * @return string[]
      */
-    public function getValueOptions();
+    public function getValueOptions(): array;
 
     /**
      * Arbitary element options
      *
      * @return array
      */
-    public function getOptions();
+    public function getOptions(): array;
 
     /**
-     * This parameters requirement
-     *
-     * @return  boolean     `true` if the parameter is required, `false` if not.
+     * Whether this parameter is required
      */
-    public function isRequired();
+    public function isRequired(): bool;
 }

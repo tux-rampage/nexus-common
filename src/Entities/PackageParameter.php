@@ -30,63 +30,59 @@ use Zend\Stdlib\Parameters;
  *
  * @return array
  */
-class PackageParameter implements ParameterInterface, Api\ArrayExchangeInterface
+class PackageParameter implements ParameterInterface
 {
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * @var string
      */
-    protected $label;
+    private $label;
 
     /**
      * @var string
      */
-    protected $type = 'text';
+    private $type = 'text';
 
     /**
      * @var string
      */
-    protected $default = null;
+    private $default = null;
 
     /**
      * @var array
      */
-    protected $options = [];
+    private $options = [];
 
     /**
      * @var array
      */
-    protected $valueOptions = null;
+    private $valueOptions = null;
 
     /**
      * @var bool
      */
-    protected $required = false;
+    private $required = false;
 
     /**
-     * Construct the parameter
-     *
-     * @param string $name
+     * @param string|ParameterInterface $nameOrParameter
      */
-    public function __construct($name = null)
+    public function __construct($nameOrParameter)
     {
-        if ($name instanceof ParameterInterface) {
-            $this->copy($name);
+        if ($nameOrParameter instanceof ParameterInterface) {
+            $this->copy($nameOrParameter);
         } else {
-            $this->setName($name);
+            $this->setName($nameOrParameter);
         }
     }
 
     /**
      * Copy from another parameter implementation
-     *
-     * @param ParameterInterface $parameter
      */
-    protected function copy(ParameterInterface $parameter)
+    protected function copy(ParameterInterface $parameter): void
     {
         $this->default = $parameter->getDefault();
         $this->label = $parameter->getLabel();
@@ -101,64 +97,37 @@ class PackageParameter implements ParameterInterface, Api\ArrayExchangeInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return self
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
-        $this->name = (string)$name;
-        return $this;
+        $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return self
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
-        $this->type = (string)$type;
-        return $this;
+        $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getDefault()
+    public function getDefault(): string
     {
         return $this->default;
     }
 
-    /**
-     * @param string $default
-     * @return self
-     */
-    public function setDefault($default)
+    public function setDefault(string $default): void
     {
-        $this->default = (string)$default;
-        return $this;
+        $this->default = $default;
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         if (!$this->label) {
             return $this->getName();
@@ -167,62 +136,34 @@ class PackageParameter implements ParameterInterface, Api\ArrayExchangeInterface
         return $this->label;
     }
 
-
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
-        return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\ParameterInterface::hasValueOptions()
-     */
-    public function hasValueOptions()
+    public function hasValueOptions(): bool
     {
         return ($this->valueOptions !== null);
     }
 
-
-    /**
-     * @return multitype:
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\ParameterInterface::getValueOptions()
-     */
-    public function getValueOptions()
+    public function getValueOptions(): array
     {
         return $this->valueOptions;
     }
 
-    /**
-     * Remove all options
-     *
-     * @return self
-     */
-    public function removeValueOptions()
+    public function removeValueOptions(): void
     {
         $this->valueOptions = null;
-        return $this;
     }
 
-    /**
-     * @param string $option
-     * @return self
-     */
-    public function addValueOption($option, $label = null)
+    public function addValueOption(string $option, string $label = null): void
     {
-        $option = (string)$option;
+        $option = $option;
 
         if ($label === null) {
             $label = $option;
@@ -232,102 +173,35 @@ class PackageParameter implements ParameterInterface, Api\ArrayExchangeInterface
             $this->valueOptions = [];
         }
 
-        $this->valueOptions[$option] = (string)$label;
-        return $this;
+        $this->valueOptions[$option] = $label;
     }
 
-    /**
-     * @param array $options
-     * @return self
-     */
-    public function setValueOptions(array $options)
+    public function setValueOptions(iterable $options): void
     {
         $this->valueOptions = [];
 
         foreach ($options as $key => $value) {
             $this->addValueOption($key, $value);
         }
-
-        return $this;
     }
 
-    public function setOption($name, $value)
+    public function setOption(string $name, string $value): void
     {
         $this->options[$name] = $value;
-        return $this;
     }
 
-    /**
-     * Set arbitary element options
-     *
-     * @param array $options
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
-        return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->required;
     }
 
-    /**
-     * @param boolean $required
-     * @return self
-     */
-    public function setRequired($required)
+    public function setRequired(bool $required): void
     {
-        $this->required = (bool)$required;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExchangeInterface::exchangeArray()
-     */
-    public function exchangeArray(array $array)
-    {
-        $data = new Parameters($array);
-
-        $this->name = $data->get('name', $this->name);
-        $this->default = $data->get('default');
-        $this->label = $data->get('label');
-        $this->required = (bool)$data->get('required');
-        $this->type = $data->get('type');
-        $this->valueOptions = null;
-        $this->setOptions($data->get('options'));
-
-        $valueOptions = $data->get('valueOptions');
-
-        if (is_array($valueOptions)) {
-            $this->setValueOptions($valueOptions);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExportableInterface::toArray()
-     */
-    public function toArray()
-    {
-        $array = [
-            'name' => $this->getName(),
-            'label' => $this->getLabel(),
-            'default' => $this->getDefault(),
-            'type' => $this->getType(),
-            'required' => $this->isRequired(),
-            'options' => $this->getOptions(),
-        ];
-
-        if ($this->hasValueOptions()) {
-            $array['valueOptions'] = $this->getValueOptions();
-        }
-
-        return $array;
+        $this->required = $required;
     }
 }

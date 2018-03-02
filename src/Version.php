@@ -46,7 +46,7 @@ final class Version
     /**
      * @param string $baseDir
      */
-    public function __construct($baseDir = null)
+    public function __construct(string $baseDir = null)
     {
         if (!$baseDir) {
             $baseDir = __DIR__ . '/../';
@@ -64,7 +64,7 @@ final class Version
      * @param string $name
      * @return bool
      */
-    private function validateTagOrBranchName($name)
+    private function validateTagOrBranchName(string $name): bool
     {
         return (bool)preg_match(self::VALID_TAG_REGEX, $name);
     }
@@ -73,7 +73,7 @@ final class Version
      * @param string $tag
      * @return bool
      */
-    private function isSemVer($tag)
+    private function isSemVer(string $tag): bool
     {
         return (bool)preg_match(self::SEMVER_REGEX, $tag);
     }
@@ -81,7 +81,7 @@ final class Version
     /**
      * @return string|null
      */
-    private function loadFromPhar()
+    private function loadFromPhar(): ?string
     {
         $pharFile = Phar::running(false);
 
@@ -106,7 +106,7 @@ final class Version
      * @param array $tags
      * @return string
      */
-    private function extractFromTags($tags)
+    private function extractFromTags(array $tags): string
     {
         $version = '';
 
@@ -134,7 +134,7 @@ final class Version
      *
      * @return string
      */
-    private function readGitDate()
+    private function readGitDate(): string
     {
         $output = [];
         $status = 0;
@@ -156,7 +156,7 @@ final class Version
      *
      * @return string
      */
-    protected function discover()
+    protected function discover(): string
     {
         $version = $this->loadFromPhar();
 
@@ -196,7 +196,7 @@ final class Version
      *
      * @return string
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         if (!$this->version) {
             $this->version = (new self())->discover();

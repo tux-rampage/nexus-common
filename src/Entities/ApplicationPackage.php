@@ -98,40 +98,25 @@ class ApplicationPackage implements PackageInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getArchive()
-     */
-    public function getArchive()
+    public function getArchive(): string
     {
         return $this->archive;
     }
 
-    /**
-     * @param string $archive
-     * @return self
-     */
-    public function setArchive($archive)
+    public function setArchive(string $archive): void
     {
         $this->archive = $archive;
-        return $this;
     }
 
     /**
      * Copy information from the given package
-     *
-     * @param PackageInterface $package
-     * @return self
      */
-    protected function copy(PackageInterface $package)
+    private function copy(PackageInterface $package): void
     {
         if ($this->getType() && ($package->getType() != $this->getType())) {
             throw new UnexpectedValueException('Incompatible package types');
@@ -151,22 +136,17 @@ class ApplicationPackage implements PackageInterface
         foreach ($package->getParameters() as $param) {
             $this->parameters[$param->getName()] = new PackageParameter($param);
         }
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDocumentRoot()
+    public function getDocumentRoot(): string
     {
         return $this->documentRoot;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtra($name = null, $default = null)
+    public function getExtra(string $name = null, $default = null)
     {
         if ($name === null) {
             return $this->extra;
@@ -179,65 +159,41 @@ class ApplicationPackage implements PackageInterface
         return $this->extra[$name];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
+    public function getParameters(): iterable
     {
         return $this->parameters->toArray();
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getVariables()
-     */
-    public function getVariables()
+    public function getVariables(): array
     {
         return $this->variables;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->version;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::isStable()
-     */
-    public function isStable()
+    public function isStable(): bool
     {
         return $this->isStable;
     }
 
     /**
      * Override stability
-     *
-     * @param string $flag
-     * @return \Rampage\Nexus\Entities\ApplicationPackage
      */
-    public function setIsStable($flag)
+    public function setIsStable(bool $flag): void
     {
-        $this->isStable = (bool)$flag;
-        return $this;
+        $this->isStable = $flag;
     }
 }

@@ -26,6 +26,7 @@ use Rampage\Nexus\Exception\InvalidArgumentException;
 use Rampage\Nexus\Package\ComposerPackage;
 
 use PharData;
+use Rampage\Nexus\Package\PackageInterface;
 use Throwable;
 
 
@@ -40,11 +41,9 @@ class ComposerLoader implements PackageLoaderInterface
     const DESCRIPTOR_FILE = 'composer.json';
 
     /**
-     * @param   PharData                    $archive
      * @throws  InvalidArgumentException
-     * @return  ZpkPackage
      */
-    protected function read(PharData $archive)
+    private function read(PharData $archive): ComposerPackage
     {
         if (!$archive->offsetExists(static::DESCRIPTOR_FILE)) {
             throw new InvalidArgumentException('The Archive does not contain a composer file');
@@ -53,26 +52,12 @@ class ComposerLoader implements PackageLoaderInterface
         return new ComposerPackage($archive->offsetGet(static::DESCRIPTOR_FILE)->getContent());
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Archive\PackageLoader\PackageLoaderInterface::canReadFromArchive()
-     */
-    public function canReadFromArchive(PharData $archive)
+    public function canReadFromArchive(PharData $archive): bool
     {
-        try {
-            $this->read($archive);
-        } catch (Throwable $e) {
-            return false;
-        }
-
-        return true;
+        return $archive->offsetExists(static::DESCRIPTOR_FILE);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Archive\PackageLoader\PackageLoaderInterface::load()
-     */
-    public function load(PharData $archive)
+    public function load(PharData $archive): PackageInterface
     {
         $package = $this->read($archive);
         $package->setArchive($archive->getPathname());
