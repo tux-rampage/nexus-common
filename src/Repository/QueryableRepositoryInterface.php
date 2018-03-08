@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2017 Axel Helmert
+ * Copyright (c) 2016 Axel Helmert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Axel Helmert
- * @copyright Copyright (c) 2017 Axel Helmert
+ * @copyright Copyright (c) 2016 Axel Helmert
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Repository\RestService;
-
-use Rampage\Nexus\Repository\RepositoryInterface;
+namespace Rampage\Nexus\Repository;
 
 /**
- * Trait for providing a repository
+ * Repository definition
  */
-trait RepositoryTrait
+interface QueryableRepositoryInterface
 {
     /**
-     * @var RepositoryInterface
+     * Find a single entity by id
+     *
+     * Consider all objects returned by this method as state tracked.
      */
-    private $repository;
+    public function findOne(string $id);
+
+    /**
+     * Query for items in the repository
+     */
+    public function find($query): ResultSetInterface;
+
+    /**
+     * A collection of all entities
+     */
+    public function findAll(): ResultSetInterface;
 }

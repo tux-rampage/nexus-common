@@ -43,11 +43,6 @@ interface PackageInterface extends ArrayExportableInterface
     public function getName(): string;
 
     /**
-     * Returns the path or URI to the archive file
-     */
-    public function getArchive(): string;
-
-    /**
      * Returns the package version number
      */
     public function getVersion(): string;

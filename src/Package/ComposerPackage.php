@@ -22,10 +22,8 @@
 
 namespace Rampage\Nexus\Package;
 
-use Rampage\Nexus\Exception\InvalidArgumentException;
-use Rampage\Nexus\Exception\UnexpectedValueException;
 use Rampage\Nexus\Entities\PackageParameter;
-
+use Rampage\Nexus\Exception\UnexpectedValueException;
 use Zend\Stdlib\Parameters;
 
 
@@ -67,22 +65,11 @@ class ComposerPackage implements PackageInterface
      */
     protected $parameters = null;
 
-    /**
-     * @var string
-     */
-    protected $archive = null;
 
-    /**
-     * @param array|string $json
-     */
-    public function __construct($json)
+    public function __construct(string $json)
     {
         if (is_string($json)) {
             $json = json_decode($json, true);
-        }
-
-        if (!is_array($json)) {
-            throw new InvalidArgumentException('The composer.json must be an array or a string containing valid json');
         }
 
         $this->nameFilter = new PackageNameFilter();
@@ -109,45 +96,16 @@ class ComposerPackage implements PackageInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getArchive()
-     */
-    public function getArchive(): string
-    {
-        return $this->archive;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Package\PackageInterface::getId()
-     */
     public function getId(): string
     {
         return $this->getName() . '@' . $this->getVersion();
     }
 
-    /**
-     * Sets the archive file
-     *
-     * @param string $archive
-     */
-    public function setArchive(?string $archive): void
-    {
-        $this->archive = $archive? : null;
-    }
-
-    /**
-     * Returns the configured document root
-     */
     public function getDocumentRoot(): string
     {
         return $this->data->get('docroot');
     }
 
-    /**
-     * @return mixed Returns the requested extra data
-     */
     public function getExtra(string $name = null)
     {
         $extra = $this->composer->get('extra', []);
@@ -156,9 +114,6 @@ class ComposerPackage implements PackageInterface
         return $extra;
     }
 
-    /**
-     * Returns the package name
-     */
     public function getName(): string
     {
         return $this->nameFilter->filter($this->composer->get('name'));
