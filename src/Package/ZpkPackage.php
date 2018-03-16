@@ -22,10 +22,10 @@
 
 namespace Rampage\Nexus\Package;
 
-use Rampage\Nexus\Exception\RuntimeException;
-use Zend\Filter\Boolean as BoolFilter;
-use SimpleXMLElement;
 use Rampage\Nexus\Entities\PackageParameter;
+use Rampage\Nexus\Exception\RuntimeException;
+use SimpleXMLElement;
+use Zend\Filter\Boolean as BoolFilter;
 use Zend\Stdlib\Parameters;
 
 
@@ -99,19 +99,6 @@ class ZpkPackage implements PackageInterface
         return $this->getName() . '@' . $this->getVersion();
     }
 
-    public function getArchive(): string
-    {
-        return $this->archive;
-    }
-
-    public function setArchive(string $archive): null
-    {
-        $this->archive = $archive;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getDocumentRoot(): string
     {
         return (string)$this->descriptor->docroot;
@@ -160,11 +147,11 @@ class ZpkPackage implements PackageInterface
             $readonly = $boolFilter($readonly);
             $param = new PackageParameter($name);
 
-            $param->setType($type)
-                ->setRequired($required)
-                ->setDefault($default)
-                ->setLabel($label)
-                ->setOption('readonly', $readonly);
+            $param->setType($type);
+            $param->setRequired($required);
+            $param->setDefault($default);
+            $param->setLabel($label);
+            $param->setOption('readonly', $readonly);
 
             switch ($type) {
                 case 'choice':
@@ -185,6 +172,9 @@ class ZpkPackage implements PackageInterface
         }
     }
 
+    /**
+     * @return iterable|PackageParameter[]
+     */
     public function getParameters(): iterable
     {
         if ($this->parameters === null) {

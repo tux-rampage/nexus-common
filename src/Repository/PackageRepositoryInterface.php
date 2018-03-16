@@ -24,28 +24,17 @@ namespace Rampage\Nexus\Repository;
 
 use Rampage\Nexus\Package\PackageInterface;
 
-
 /**
  * Repository for entities implementing PackageInterface
- *
- * @see PackageInterface    Package interface
- * @method PackageInterface findOne($id)
  */
-interface PackageRepositoryInterface extends RepositoryInterface
+interface PackageRepositoryInterface extends QueryableRepositoryInterface
 {
+    public function findOne(string $id): PackageInterface;
+
     /**
      * Find all packages for the given package name
      *
-     * @param   string              $packageName
-     * @return  PackageInterface[]
+     * @return ResultSetInterface|PackageInterface[]
      */
-    public function findByPackageName($packageName);
-
-    /**
-     * Add a subscriber
-     *
-     * @param Package\SubscriberInterface $subscriber
-     * @return self
-     */
-    public function addSubscriber(Package\SubscriberInterface $subscriber);
+    public function findByPackageName($packageName): ResultSetInterface;
 }

@@ -25,22 +25,22 @@ namespace Rampage\Nexus\Repository;
 /**
  * Repository definition
  */
-interface RepositoryInterface
+interface QueryableRepositoryInterface
 {
     /**
      * Find a single entity by id
      *
      * Consider all objects returned by this method as state tracked.
-     *
-     * @param   string      $id The object's identifier
-     * @return  object|null     The resulting object or null
      */
-    public function findOne($id);
+    public function findOne(string $id);
+
+    /**
+     * Query for items in the repository
+     */
+    public function find($query): ResultSetInterface;
 
     /**
      * A collection of all entities
-     *
-     * @return  object[]
      */
-    public function findAll();
+    public function findAll(): ResultSetInterface;
 }

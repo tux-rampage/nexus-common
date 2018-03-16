@@ -22,11 +22,11 @@
 
 namespace Rampage\Nexus\Entities;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Rampage\Nexus\Exception\UnexpectedValueException;
+use Rampage\Nexus\Package\ArrayExportableTrait as ArrayExportablePackageTrait;
 use Rampage\Nexus\Package\PackageInterface;
 use Rampage\Nexus\Package\ParameterInterface;
-use Rampage\Nexus\Package\ArrayExportableTrait as ArrayExportablePackageTrait;
-use Rampage\Nexus\Exception\UnexpectedValueException;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Application Package Entity
@@ -87,12 +87,11 @@ class ApplicationPackage implements PackageInterface
      */
     protected $extra = [];
 
-    /**
-     * @param PackageInterface $copyFrom
-     */
+
     public function __construct(PackageInterface $package = null)
     {
         $this->parameters = new ArrayCollection();
+
         if ($package) {
             $this->copy($package);
         }
@@ -101,16 +100,6 @@ class ApplicationPackage implements PackageInterface
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function getArchive(): string
-    {
-        return $this->archive;
-    }
-
-    public function setArchive(string $archive): void
-    {
-        $this->archive = $archive;
     }
 
     /**
@@ -123,7 +112,6 @@ class ApplicationPackage implements PackageInterface
         }
 
         $this->id = $package->getId();
-        $this->archive = $package->getArchive();
         $this->documentRoot = $package->getDocumentRoot();
         $this->extra = $package->getExtra();
         $this->name = $package->getName();

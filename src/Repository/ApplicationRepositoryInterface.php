@@ -22,9 +22,12 @@
 
 namespace Rampage\Nexus\Repository;
 
+use Rampage\Nexus\Entities\Application;
+
 /**
  * Application repository
  */
-interface ApplicationRepositoryInterface extends RepositoryInterface
+interface ApplicationRepositoryInterface extends QueryableRepositoryInterface
 {
+    public function findOne(string $id): Application;
 }

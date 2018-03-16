@@ -31,21 +31,17 @@ use Rampage\Nexus\Entities\DeployTarget;
  *
  * @method \Rampage\Nexus\Entities\AbstractNode findOne($id)
  */
-interface NodeRepositoryInterface extends RepositoryInterface, PrototypeProviderInterface
+interface NodeRepositoryInterface extends QueryableRepositoryInterface, PrototypeProviderInterface
 {
     /**
      * Find nodes for a target
      *
-     * @param DeployTarget $target
-     * @return AbstractNode[]
+     * @return ResultSetInterface|Node[]
      */
-    public function findByTarget(DeployTarget $target);
+    public function findByTarget(DeployTarget $target): ResultSetInterface;
 
     /**
      * Finds a node by its url
-     *
-     * @param string $url
-     * @return Node|null
      */
-    public function findByUrl($url);
+    public function findByUrl(string $url): ?Node;
 }
