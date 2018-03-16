@@ -43,8 +43,8 @@ return [
             FileSystemInterface::class => FileSystem::class,
             Archive\ArchiveLoaderInterface::class => Archive\ArchiveLoader::class,
 
-            Api\RequestSignatureInterface::class => Api\PublicKeySignature::class,
-            Api\SignRequestInterface::class => Api\PublicKeySignature::class,
+            ApiClient\RequestSignatureInterface::class => ApiClient\PublicKeySignature::class,
+            ApiClient\AuthenticateStrategy::class => ApiClient\PublicKeySignature::class,
 
             PasswordInterface::class => BcryptPasswordStrategy::class,
             Config\PropertyConfigInterface::class => 'RuntimeConfig',

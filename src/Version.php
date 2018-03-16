@@ -22,186 +22,35 @@
 
 namespace Rampage\Nexus;
 
-use Phar;
-use DateTime;
+use PackageVersions\Versions;
 
 /**
  * Provides the application version
  */
 final class Version
 {
-    /**
-     * @var string
-     */
-    private $baseDir;
+    const PACKAGE_NAME = 'tuxrampage/nexus-common';
 
     /**
      * @var string
      */
-    private $version = null;
-
-    const VALID_TAG_REGEX = '~^[a-z0-9.-]+$~';
-    const SEMVER_REGEX = '~^v?\d+(\.\d+)*(-(dev|alpha|beta|patch|rc)\d*)?$~i';
+    private static $version = null;
 
     /**
-     * @param string $baseDir
+     * @var string
      */
-    public function __construct(string $baseDir = null)
-    {
-        if (!$baseDir) {
-            $baseDir = __DIR__ . '/../';
-
-            // This is a dependency installed in vendor ...
-            if (!is_dir($baseDir . 'vendor') && is_dir($baseDir . '../../../.git')) {
-                $baseDir .= '../../../';
-            }
-        }
-
-        $this->baseDir = $baseDir;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    private function validateTagOrBranchName(string $name): bool
-    {
-        return (bool)preg_match(self::VALID_TAG_REGEX, $name);
-    }
-
-    /**
-     * @param string $tag
-     * @return bool
-     */
-    private function isSemVer(string $tag): bool
-    {
-        return (bool)preg_match(self::SEMVER_REGEX, $tag);
-    }
-
-    /**
-     * @return string|null
-     */
-    private function loadFromPhar(): ?string
-    {
-        $pharFile = Phar::running(false);
-
-        if (!$pharFile) {
-            return null;
-        }
-
-        $metadata = (new Phar($pharFile))->getMetadata();
-        if (!$metadata || !isset($metadata['build']['version'])) {
-            return null;
-        }
-
-        return $metadata['build']['version'];
-    }
-
-    /**
-     * Extract the version from tags pointing to the HEAD
-     *
-     * This will prefer semantic versioned tags and fall back to named
-     * tags.
-     *
-     * @param array $tags
-     * @return string
-     */
-    private function extractFromTags(array $tags): string
-    {
-        $version = '';
-
-        foreach ($tags as $tag) {
-            $tag = trim($tag);
-
-            if (!$this->validateTagOrBranchName($tag)) {
-                continue;
-            }
-
-            if ($this->isSemVer($tag)) {
-                return strtolower($tag);
-            }
-
-            if ($version == '') {
-                $version = strtolower($tag);
-            }
-        }
-
-        return $version;
-    }
-
-    /**
-     * Read the date from GIT
-     *
-     * @return string
-     */
-    private function readGitDate(): string
-    {
-        $output = [];
-        $status = 0;
-
-        exec('git log -1 --format=%ci', $output, $status);
-
-        try {
-            $dateStr = (($status == 0) && (count($output) > 0))? trim(array_shift($output)) : '';
-            $date = ($dateStr == '')? new DateTime() : DateTime::createFromFormat(DateTime::ISO8601, $dateStr);
-        } catch (\Exception $e) {
-            $date = new \DateTime();
-        }
-
-        return $date? $date->format('Ymd') : (new DateTime())->format('Ymd');
-    }
-
-    /**
-     * Try to discover the version info
-     *
-     * @return string
-     */
-    protected function discover(): string
-    {
-        $version = $this->loadFromPhar();
-
-        if ($version) {
-            return $version;
-        }
-
-        $output = [];
-        $status = 0;
-        $cwd = getcwd();
-
-        chdir($this->baseDir);
-        exec('git tag -l --points-at HEAD', $output, $status);
-
-        $version = ($status == 0)? $this->extractFromTags($output) : null;
-
-        if ($version == '') {
-            exec('git rev-parse --abbrev-ref HEAD', $output, $status);
-            $version = ($status == 0)? strtolower(trim(array_shift($output))) : null;
-            $gitDate = $this->readGitDate();
-
-            if (!$this->isSemVer($version)) {
-                if ($this->validateTagOrBranchName((string)$version)) {
-                    $version =  'dev-' . $version . '@' . $gitDate;
-                } else {
-                    $version = 'UNKNOWN@' . $gitDate;
-                }
-            }
-        }
-
-        chdir($cwd);
-        return $version;
-    }
+    private static $short = null;
 
     /**
      * Returns the current version
-     *
-     * @return string
      */
-    public function getVersion(): string
+    public static function getVersion(bool $full = false): string
     {
-        if (!$this->version) {
-            $this->version = (new self())->discover();
+        if (!self::$version) {
+            self::$version = Versions::getVersion(self::PACKAGE_NAME);
+            list(self::$short) = explode('@', self::$version, 2);
         }
 
-        return $this->version;
+        return $full? self::$version : self::$short;
     }
 }

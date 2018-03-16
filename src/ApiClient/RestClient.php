@@ -20,13 +20,13 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Api;
+namespace Rampage\Nexus\ApiClient;
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\Middleware as GuzzleMiddleware;
-use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\HandlerStack;
+use Rampage\Nexus\ApiClient\Middleware\AuthenticateMiddleware;
+use Rampage\Nexus\ApiClient\Middleware\JsonResponseMiddleware;
 
 /**
  * Implements the Rest client for api calls
@@ -34,21 +34,14 @@ use Psr\Http\Message\RequestInterface;
 class RestClient extends HttpClient
 {
     /**
-     * @var SignRequestInterface
-     */
-    private $signRequestStrategy;
-
-    /**
      * Constructor
      */
-    public function __construct(SignRequestInterface $signRequestStrategy, callable $handler = null)
+    public function __construct(AuthenticateStrategy $signRequestStrategy, callable $handler = null)
     {
-        $this->signRequestStrategy = $signRequestStrategy;
         $handlerStack = new HandlerStack();
         $handlerStack->setHandler($handler?: new CurlHandler());
-        $handlerStack->push(GuzzleMiddleware::mapRequest(function(RequestInterface $request) {
-            return $this->signRequestStrategy->sign($request);
-        }));
+        $handlerStack->push(new GuzzleMiddlewareAdapter(new JsonResponseMiddleware()));
+        $handlerStack->push(new GuzzleMiddlewareAdapter(new AuthenticateMiddleware($signRequestStrategy)));
 
         parent::__construct([
             'handler' => $handlerStack

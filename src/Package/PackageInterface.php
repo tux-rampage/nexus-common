@@ -22,12 +22,10 @@
 
 namespace Rampage\Nexus\Package;
 
-use Rampage\Nexus\Entities\Api\ArrayExportableInterface;
-
 /**
  * Application Package Interface
  */
-interface PackageInterface extends ArrayExportableInterface
+interface PackageInterface extends \JsonSerializable
 {
     /**
      * Returns the unique package id

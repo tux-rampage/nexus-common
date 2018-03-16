@@ -22,37 +22,26 @@
 
 namespace Rampage\Nexus\Package;
 
-use Rampage\Nexus\Exception\LogicException;
-
 /**
- * Provides the array exportable implementation for packages
+ * Provides json exportability for packages
  */
-trait ArrayExportableTrait
+final class JsonSerializer
 {
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Entities\Api\ArrayExportableInterface::toArray()
-     */
-    public function toArray()
+    public function extract(PackageInterface $package): array
     {
-        /** @var PackageInterface $this */
-        if (!$this instanceof PackageInterface) {
-            throw new LogicException('This trait can only act on PackageInterface implementations');
-        }
-
         $array = [
-            'id' => $this->getId(),
-            'documentRoot' => $this->getDocumentRoot(),
-            'extra' => $this->getExtra(),
-            'name' => $this->getName(),
-            'type' => $this->getType(),
-            'version' => $this->getVersion(),
-            'variables' => $this->getVariables(),
+            'id' => $package->getId(),
+            'documentRoot' => $package->getDocumentRoot(),
+            'extra' => $package->getExtra(),
+            'name' => $package->getName(),
+            'type' => $package->getType(),
+            'version' => $package->getVersion(),
+            'variables' => $package->getVariables(),
             'parameters' => [],
         ];
 
         /* @var $parameter \Rampage\Nexus\Package\ParameterInterface */
-        foreach ($this->getParameters() as $parameter) {
+        foreach ($package->getParameters() as $parameter) {
             $name = $parameter->getName();
             $array['parameters'][$name] = [
                 'name' => $name,
@@ -77,6 +66,4 @@ trait ArrayExportableTrait
 
         return $array;
     }
-
-
 }

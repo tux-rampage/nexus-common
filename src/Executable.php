@@ -22,7 +22,6 @@
 
 namespace Rampage\Nexus;
 
-
 /**
  * Provides an object orient interface for executables
  *
@@ -145,14 +144,10 @@ class Executable
 
     /**
      * Sets the working directory for the command
-     *
-     * @param   string  $cwd    Path to the working directory
-     * @return  self
      */
-    public function setCwd($cwd)
+    public function setCwd(string $cwd): void
     {
-        $this->cwd = (string)$cwd;
-        return $this;
+        $this->cwd = $cwd;
     }
 
     /**
@@ -160,34 +155,29 @@ class Executable
      *
      * If the executable is constructed with `$keepEnvironment = true`,
      * __the inherited environment variables will be removed as well__.
-     *
-     * @return self
      */
-    public function clearEnv()
+    public function clearEnv(): void
     {
         $this->env = array();
-        return $this;
     }
 
     /**
      * Sets one or more environment variables for the command
      *
-     * @param   array|string|Traversable    $env    The envvar name or an array of variables
+     * @param   array|string|\Traversable   $env    The envvar name or an array of variables
      * @param   string                      $value  The value to set. This is ignored when $env is an array or `Traversable`.
-     * @return  self                                Provides a fluent interface
      */
-    public function setEnv($env, string $value = null)
+    public function setEnv($env, string $value = null): void
     {
-        if (is_array($env) || ($env instanceof \Traversable)) {
+        if (is_iterable($env)) {
             foreach ($env as $key => $value) {
                 $this->setEnv($key, $value);
             }
 
-            return $this;
+            return;
         }
 
         $this->env[$env] = $value;
-        return $this;
     }
 
     /**
@@ -196,17 +186,14 @@ class Executable
      * These will be escaped and appended to the command
      *
      * @param   array   $args   The arguments to set
-     * @return  self            Provides a fluent interface
      */
-    public function setArgs(array $args)
+    public function setArgs(array $args): void
     {
         $this->args = array();
 
         foreach ($args as $arg) {
             $this->addArg($arg);
         }
-
-        return $this;
     }
 
     /**
@@ -214,12 +201,10 @@ class Executable
      *
      * @see     setArgs()           Arguments setter
      * @param   string      $arg    The argument to add
-     * @return  self                Provides a fluent interface
      */
-    public function addArg(string $arg)
+    public function addArg(string $arg): void
     {
         $this->args[] = $arg;
-        return $this;
     }
 
     /**
@@ -289,7 +274,7 @@ class Executable
      *
      * @param   int     $index  The index of the pipe to close
      */
-    protected function closePipe($index): void
+    protected function closePipe(int $index): void
     {
         if (!isset($this->pipes[$index]) || ($this->pipes[$index] === null)) {
             return;
@@ -328,11 +313,10 @@ class Executable
      * Sets the stream for `STDOUT`
      *
      * @param   resource|string $stream The output stream resource or filename.
-     * @return  self
      * @throws  Exception\InvalidArgumentException  When the stream is not a valid stream resource or filename
      * @throws  Exception\LogicException            When the command was already executed and not yet closed
      */
-    public function setOutput($stream)
+    public function setOutput($stream): void
     {
         if ($this->process !== null) {
             throw new Exception\LogicException('Cannot set the output stream when the command is executed');
@@ -348,7 +332,6 @@ class Executable
         }
 
         $this->output = $stream;
-        return $this;
     }
 
     /**
@@ -357,7 +340,7 @@ class Executable
      * @return  string  The command output written to `STDOUT`. If there is no Stream
      *                  for `STDOUT`, `null` is returned.
      */
-    public function getOutput()
+    public function getOutput(): ?string
     {
         if (!is_resource($this->output)) {
             return null;
@@ -372,7 +355,7 @@ class Executable
      * @return  string  The command output written to `STDERR`.
      *                  If there is no stream for `STDERR`, `null` is returned.
      */
-    public function getErrorOutput()
+    public function getErrorOutput(): ?string
     {
         if (!is_resource($this->stderr)) {
             return null;
@@ -385,11 +368,10 @@ class Executable
      * Set the error output stream
      *
      * @param   resource|string $stream The stream resource or filename to use for `STDERR`
-     * @return  self
      * @throws  Exception\InvalidArgumentException  When the stream is not a valid stream resource or filename
      * @throws  Exception\LogicException            When the command was already executed and not yet closed
      */
-    public function setErrorOutput($stream)
+    public function setErrorOutput($stream): void
     {
         if ($this->process !== null) {
             throw new Exception\LogicException('Cannot set the output stream when the command is executed');
@@ -405,7 +387,6 @@ class Executable
         }
 
         $this->stderr = $stream;
-        return $this;
     }
 
     /**
@@ -417,7 +398,7 @@ class Executable
      *
      * @throws  Exception\RuntimeException  When creating the process failes on system level
      */
-    public function execute($wait = true)
+    public function execute(bool $wait = true): bool
     {
         $cwd = ($this->cwd == '')? getcwd() : $this->cwd;
         $command = array_filter($this->args, 'escapeshellarg');

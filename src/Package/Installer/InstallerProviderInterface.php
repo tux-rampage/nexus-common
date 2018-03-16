@@ -22,17 +22,18 @@
 
 namespace Rampage\Nexus\Package\Installer;
 
+use Psr\Container\ContainerInterface;
 use Rampage\Nexus\Package\PackageInterface;
 
 /**
  * Interface for installer providers
  */
-interface InstallerProviderInterface
+interface InstallerProviderInterface extends ContainerInterface
 {
     /**
-     * Resolves the installer for the given package
+     * Resolves the installer for the given package type
      */
-    public function getInstaller(PackageInterface $package): InstallerInterface;
+    public function get($type): InstallerInterface;
 
     /**
      * Returns all package types for which installers are available

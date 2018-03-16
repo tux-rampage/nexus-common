@@ -34,7 +34,6 @@ use Zend\Stdlib\Parameters;
  */
 class ComposerPackage implements PackageInterface
 {
-    use ArrayExportableTrait;
     use BuildIdAwareTrait;
     use VersionStabilityTrait;
 
@@ -218,5 +217,10 @@ class ComposerPackage implements PackageInterface
         }
 
         return $version;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return (new JsonSerializer())->extract($this);
     }
 }

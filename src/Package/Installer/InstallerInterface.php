@@ -33,30 +33,22 @@ use Rampage\Nexus\Package\PackageInterface;
 interface InstallerInterface
 {
     /**
-     * Set the package to operate on
-     */
-    public function setPackage(PackageInterface $package): void;
-
-    /**
      * Set the target directory to install to
      */
     public function setTargetDirectory(SplFileInfo $dir): void;
 
     /**
      * Returns the relative web root path.
-     *
-     * If the return value is NULL or empty, the deploy strategy may assume that the application directory is the
-     * web root.
      */
-    public function getWebRoot(array $params): ?string;
+    public function getWebRoot(PackageInterface $package, array $params): ?string;
 
     /**
      * Install the current application package
      */
-    public function install(array $params): void;
+    public function install(PackageInterface $package, array $params): void;
 
     /**
      * Remove the current application package
      */
-    public function remove(array $params): void;
+    public function remove(PackageInterface $package, array $params): void;
 }

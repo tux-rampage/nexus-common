@@ -20,37 +20,27 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Repository\RestService;
+namespace Rampage\Nexus\ApiClient;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Rampage\Nexus\Api\JsonExportableCollection;
+use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\RequestInterface;
 
-
-trait GetableTrait
+class GuzzleMiddlewareAdapter
 {
-    use RepositoryTrait;
-
     /**
-     * @return object[]
+     * @var GuzzleMiddleware
      */
-    protected function getList(ServerRequestInterface $request)
+    private $middleware;
+
+    public function __construct(GuzzleMiddleware $middleware)
     {
-        return new JsonExportableCollection($this->getRepository()->findAll());
+        $this->middleware = $middleware;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return mixed
-     */
-    public function get($requestOrId = null)
+    public function __invoke(callable $handler): callable
     {
-        $request = ($requestOrId instanceof ServerRequestInterface)? $requestOrId : null;
-        $id = $request? $request->getAttribute('id') : $requestOrId;
-
-        if (!$id) {
-            return $request? $this->getList($request) : null;
-        }
-
-        return $this->getRepository()->findOne($id);
+        return function(RequestInterface $request, array $options = []) use ($handler): PromiseInterface {
+            return $this->middleware->process($request, $handler, $options);
+        };
     }
 }

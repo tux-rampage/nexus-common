@@ -34,7 +34,6 @@ use Zend\Stdlib\Parameters;
  */
 class ZpkPackage implements PackageInterface
 {
-    use ArrayExportableTrait;
     use BuildIdAwareTrait;
     use VersionStabilityTrait;
 
@@ -242,5 +241,10 @@ class ZpkPackage implements PackageInterface
     public function getScriptsDir(): string
     {
         return (string)$this->descriptor->scriptsdir;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return (new JsonSerializer())->extract($this);
     }
 }

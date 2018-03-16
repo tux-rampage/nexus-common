@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2017 Axel Helmert
+ * Copyright (c) 2015 Axel Helmert
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author    Axel Helmert
- * @copyright Copyright (c) 2017 Axel Helmert
+ * @copyright Copyright (c) 2015 Axel Helmert
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Repository\RestService;
+namespace Rampage\Nexus\ApiClient;
 
-use Rampage\Nexus\Repository\RepositoryInterface;
+use Psr\Http\Message\RequestInterface;
 
 /**
- * Trait for providing a repository
+ * Sign an http request
  */
-trait RepositoryTrait
+interface AuthenticateStrategy
 {
     /**
-     * @var RepositoryInterface
+     * Authenticate the given request
      */
-    private $repository;
+    public function authenticate(RequestInterface $request, array $options): RequestInterface;
 }

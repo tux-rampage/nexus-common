@@ -22,8 +22,8 @@
 
 namespace Rampage\Nexus;
 
-use RecursiveDirectoryIterator;
 use DirectoryIterator;
+use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 /**

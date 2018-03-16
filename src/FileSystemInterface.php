@@ -22,7 +22,6 @@
 
 namespace Rampage\Nexus;
 
-
 /**
  * Filesystem API
  */

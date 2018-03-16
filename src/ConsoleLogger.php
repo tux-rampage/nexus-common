@@ -24,11 +24,9 @@ namespace Rampage\Nexus;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerTrait;
-use Psr\Log\LogLevel;
-
 use Psr\Log\NullLogger;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger as SymfonyConsoleLogger;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Decorates a logger and tees to the console

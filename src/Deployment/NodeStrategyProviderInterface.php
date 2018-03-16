@@ -26,15 +26,18 @@ use Interop\Container\ContainerInterface;
 
 /**
  * Interface for node providers
- *
- * @method NodeStrategyInterface get(string $name);
  */
 interface NodeStrategyProviderInterface extends ContainerInterface
 {
+    /**
+     * @return NodeInterface
+     */
+    public function get($name): NodeInterface;
+
     /**
      * Retuns all known node types
      *
      * @return string[]
      */
-    public function getTypes();
+    public function getTypes(): iterable;
 }

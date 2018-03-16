@@ -73,7 +73,7 @@ interface StageSubscriberInterface
      *
      * @param  array|ArrayAccess  $params   User params
      */
-    public function beforeRollback($params, $isRollbackTarget);
+    public function beforeRollback($params, bool $isRollbackTarget);
 
     /**
      * Called after rollback

@@ -24,7 +24,6 @@ namespace Rampage\Nexus;
 
 use Psr\Http\Message\StreamInterface;
 
-
 /**
  * Implements a noop stream like /dev/null
  */

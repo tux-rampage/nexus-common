@@ -20,33 +20,12 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License
  */
 
-namespace Rampage\Nexus\Repository\RestService;
+namespace Rampage\Nexus\ApiClient;
 
-use Psr\Http\Message\ServerRequestInterface;
+use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\RequestInterface;
 
-/**
- * Implements delet entity from repo
- */
-trait DeletableTrait
+interface GuzzleMiddleware
 {
-    use RepositoryTrait;
-    use PersistenceManagerTrait;
-
-    /**
-     * Delete an entity
-     *
-     * @param ServerRequestInterface $request
-     * @return NULL|object
-     */
-    public function delete(ServerRequestInterface $request)
-    {
-        $id = $request->getAttribute('id');
-        $entity = $id? $this->repository->findOne($id) : null;
-
-        if (!$entity) {
-            $this->persistenceManager->remove($entity);
-        }
-
-        return $entity;
-    }
+    public function process(RequestInterface $request, callable $next, array $options): PromiseInterface;
 }
