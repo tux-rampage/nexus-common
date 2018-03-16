@@ -27,7 +27,7 @@ use Rampage\Nexus\Entities\Application;
 /**
  * Application repository
  */
-interface ApplicationRepositoryInterface extends QueryableRepositoryInterface
+interface ApplicationRepositoryInterface extends RepositoryInterface
 {
     public function findOne(string $id): Application;
 }

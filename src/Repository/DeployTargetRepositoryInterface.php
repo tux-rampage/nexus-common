@@ -22,7 +22,7 @@
 
 namespace Rampage\Nexus\Repository;
 
-use Rampage\Nexus\Repository\QueryableRepositoryInterface;
+use Rampage\Nexus\Repository\RepositoryInterface;
 use Rampage\Nexus\Entities\DeployTarget;
 use Rampage\Nexus\Entities\Application;
 use Rampage\Nexus\Entities\ApplicationPackage;
@@ -30,7 +30,7 @@ use Rampage\Nexus\Entities\ApplicationPackage;
 /**
  * Repository for deploy targets
  */
-interface DeployTargetRepositoryInterface extends QueryableRepositoryInterface
+interface DeployTargetRepositoryInterface extends RepositoryInterface
 {
     public function findOne(string $id): DeployTarget;
 

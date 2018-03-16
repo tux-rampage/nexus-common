@@ -27,7 +27,7 @@ use Rampage\Nexus\Package\PackageInterface;
 /**
  * Repository for entities implementing PackageInterface
  */
-interface PackageRepositoryInterface extends QueryableRepositoryInterface
+interface PackageRepositoryInterface extends RepositoryInterface
 {
     public function findOne(string $id): PackageInterface;
 

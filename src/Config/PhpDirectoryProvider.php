@@ -22,13 +22,18 @@
 
 namespace Rampage\Nexus\Config;
 
+use Iterator;
+use SplFileInfo;
+
 /**
  * Implements a config provider for include directories that will also work within Phars
  */
 class PhpDirectoryProvider
 {
     /**
-     * @var Path to the directory to aggregate
+     * Path to the directory to aggregate
+     *
+     * @var string
      */
     private $directory;
 
@@ -43,7 +48,7 @@ class PhpDirectoryProvider
      * @param string $directory
      * @param string $suffix
      */
-    public function __construct($directory, $suffix = '.conf.php')
+    public function __construct(string $directory, string $suffix = '.conf.php')
     {
         $this->directory = $directory;
         $this->suffix = $suffix;
@@ -52,20 +57,17 @@ class PhpDirectoryProvider
     /**
      * @return \CallbackFilterIterator|\SplFileInfo[]
      */
-    private function getIterator()
+    private function getIterator(): Iterator
     {
         $iterator = new \FilesystemIterator($this->directory);
         $suffixLength = strlen($this->suffix);
 
-        return new \CallbackFilterIterator($iterator, function(\SplFileInfo $current, $key, $iterator) use ($suffixLength) {
+        return new \CallbackFilterIterator($iterator, function(SplFileInfo $current) use ($suffixLength) {
             return (substr($current->getFilename(), 0 - $suffixLength) == $this->suffix);
         });
     }
 
-    /**
-     * @return Generator
-     */
-    public function __invoke()
+    public function __invoke(): iterable
     {
         foreach ($this->getIterator() as $file) {
             yield include $file->getPathname();

@@ -38,11 +38,7 @@ class CommonConfigProvider extends AbstractConfigProvider
         parent::__construct($env);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Config\AbstractConfigProvider::getProviders()
-     */
-    protected function getProviders()
+    protected function getProviders(): array
     {
         $providers = [
             new DiConfigProvider(),

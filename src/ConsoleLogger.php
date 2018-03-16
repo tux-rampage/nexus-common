@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Decorates a logger and tees to the console
  */
-class ConsoleLogger implements LoggerInterface
+final class ConsoleLogger implements LoggerInterface
 {
     use LoggerTrait;
 

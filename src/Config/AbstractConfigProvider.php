@@ -31,7 +31,7 @@ use Zend\Stdlib\ParametersInterface;
  *
  * @see https://docs.zendframework.com/zend-component-installer/
  */
-abstract class AbstractConfigProvider implements ConfigProviderInterface
+abstract class AbstractConfigProvider
 {
     /**
      * @var string
@@ -74,27 +74,7 @@ abstract class AbstractConfigProvider implements ConfigProviderInterface
      *
      * @return array
      */
-    abstract protected function getProviders();
-
-    /**
-     * @return array
-     */
-    public function getConfig()
-    {
-        $aggregator = new ConfigAggregator($this->getProviders(), $this->cacheFile);
-        return $aggregator->getMergedConfig();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Rampage\Nexus\Config\ConfigProviderInterface::clearCache()
-     */
-    public function clearCache()
-    {
-        if ($this->cacheFile && file_exists($this->cacheFile)) {
-            @unlink($this->cacheFile);
-        }
-    }
+    abstract protected function getProviders(): array;
 
     /**
      * Returns the configuration array
@@ -104,8 +84,8 @@ abstract class AbstractConfigProvider implements ConfigProviderInterface
      *
      * @return array
      */
-    public function __invoke()
+    public function __invoke(): array
     {
-        return $this->getConfig();
+        return (new ConfigAggregator($this->getProviders(), $this->cacheFile))->getMergedConfig();
     }
 }

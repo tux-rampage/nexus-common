@@ -35,23 +35,28 @@ use Zend\ServiceManager\Config as ServiceConfig;
 /**
  * Default application instance
  */
-trait BootstrapTrait
+class Bootstrap
 {
     /**
      * @var ContainerInterface
      */
     private $container;
 
-    private function createContainer(ConfigProviderInterface $configProvider): ContainerInterface
+    public function __construct(callable $configProvider)
     {
-        $config = $configProvider->getConfig();
+        $this->container = $this->createContainer($configProvider);
+    }
+
+    private function createContainer(callable $configProvider): ContainerInterface
+    {
+        $config = $configProvider();
         $container = new ServiceManager();
 
-        (new ServiceConfig($config['dependencies']))->configureServiceManager($container);
+        (new ServiceConfig($config['dependencies'] ?? []))->configureServiceManager($container);
 
         // Inject config
         $container->setService('config', $config);
-        $container->setService(ConfigProviderInterface::class, $configProvider);
+        $container->setService(ServiceManager::class, $container);
 
         return $container;
     }

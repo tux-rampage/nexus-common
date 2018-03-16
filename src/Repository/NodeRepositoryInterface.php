@@ -22,16 +22,13 @@
 
 namespace Rampage\Nexus\Repository;
 
-use Rampage\Nexus\Entities\Node;
 use Rampage\Nexus\Entities\DeployTarget;
-
+use Rampage\Nexus\Entities\Node;
 
 /**
  * Node repository
- *
- * @method \Rampage\Nexus\Entities\AbstractNode findOne($id)
  */
-interface NodeRepositoryInterface extends QueryableRepositoryInterface, PrototypeProviderInterface
+interface NodeRepositoryInterface extends RepositoryInterface
 {
     /**
      * Find nodes for a target

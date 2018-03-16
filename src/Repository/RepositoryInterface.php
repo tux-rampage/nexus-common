@@ -25,7 +25,7 @@ namespace Rampage\Nexus\Repository;
 /**
  * Repository definition
  */
-interface QueryableRepositoryInterface
+interface RepositoryInterface
 {
     /**
      * Find a single entity by id
@@ -33,11 +33,6 @@ interface QueryableRepositoryInterface
      * Consider all objects returned by this method as state tracked.
      */
     public function findOne(string $id);
-
-    /**
-     * Query for items in the repository
-     */
-    public function find($query): ResultSetInterface;
 
     /**
      * A collection of all entities
